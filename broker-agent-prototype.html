@@ -889,6 +889,28 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 .upload.done{border-color:var(--brand);color:var(--brand)}
 .sheet-body{padding-bottom:28px}
 
+/* first run: once the menu is open, spotlight the section to start with */
+.spot{
+  position:absolute;inset:0;z-index:10;
+  opacity:0;pointer-events:none;transition:opacity .32s ease;
+}
+.spot.show{opacity:1;pointer-events:auto}
+.spot-hole{
+  position:absolute;border-radius:10px;cursor:pointer;
+  box-shadow:0 0 0 9999px rgba(17,12,28,.62);
+}
+.spot-hole::after{
+  content:'';position:absolute;inset:-4px;border-radius:13px;
+  border:2px solid var(--brand-300);
+  animation:spotRing 1.7s ease-in-out infinite;
+}
+@keyframes spotRing{0%,100%{opacity:.2}50%{opacity:1}}
+.spot-tip{
+  position:absolute;margin:0;max-width:240px;
+  font-size:13px;font-weight:600;line-height:1.5;color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.45);
+}
+
 /* ---- first-run coach marks ---- */
 .coach{
   position:absolute;inset:0;z-index:10;
@@ -1149,6 +1171,11 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
           <div class="coach" data-id="coach">
             <div class="coach-hole" data-id="coachHole" role="button" tabindex="0" aria-label="Open your application menu"></div>
             <p class="coach-tip"><b>Tap the menu</b><span>Track your progress here at any time.</span></p>
+          </div>
+
+          <div class="spot" data-id="spot">
+            <div class="spot-hole" data-id="spotHole" role="button" tabindex="0" aria-label="Start with Loan details"></div>
+            <p class="spot-tip" data-id="spotTip">Let’s get started!</p>
           </div>
 
           <div class="home" data-id="home">
@@ -1495,8 +1522,9 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   var values = {}, busy = false;
   var decks = [];   /* decks[d] holds a section's slides, answers and position */
   var seen = { lenders:false, done:false };   /* one-off milestones */
-  var coached = { menu:false, pill:false };   /* first-run coach marks */
+  var coached = { menu:false, pill:false, start:false };   /* first-run coach marks */
   var awaitingMenu = false;
+  var spotTimer = null, firstRow = null;      /* the "start here" spotlight in the menu */
   var journeyStarted = false;                 /* survives a trip back to the homescreen */
 
   /* The opener types on in two beats, then the menu spotlight lifts. */
@@ -1907,6 +1935,16 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   function jumpToSection(secId, name){
     var i = deckIndexOf(secId), dk = i >= 0 ? decks[i] : null;
 
+    /* The opener still has a card waiting to drop into the chat. Picking a
+       section here takes its place, so the intro doesn't post a second copy. */
+    if (awaitingMenu && i >= 0){
+      endMenuCoach();
+      openSheet(false);
+      setQuicks([]);
+      agentSays([INTRO[2]], 450, function(){ renderDeck(i, 0, null); });
+      return;
+    }
+
     if (dk && dk.block && dk.block.parentNode === thread){
       openSheet(false);
       requestAnimationFrame(function(){
@@ -2310,9 +2348,55 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   function openSheet(open){
     sheet.classList.toggle('show', open);
     scrim.classList.toggle('show', open);
-    if (open){ prompt.blur(); kb(false); }
-    else if (awaitingMenu) resumeIntro();   // the coach mark ends when they close it
+    if (open){ prompt.blur(); kb(false); armSpot(); }
+    else {
+      clearSpot();
+      if (awaitingMenu) resumeIntro();      // the coach mark ends when they close it
+    }
   }
+
+  /* Where a node sits inside the phone, with the preview's scaling divided out. */
+  function rectInScreen(node){
+    var s = screenEl.getBoundingClientRect();
+    var k = (screenEl.clientWidth ? s.width / screenEl.clientWidth : 1) || 1;
+    var r = node.getBoundingClientRect();
+    return { x:(r.left - s.left)/k, y:(r.top - s.top)/k, w:r.width/k, h:r.height/k };
+  }
+
+  /* First time the menu opens, let it settle, then spotlight where to start —
+     the same cut-out treatment as the menu coach mark. */
+  function armSpot(){
+    if (coached.start || SECTIONS[0].done > 0) return;
+    clearTimeout(spotTimer);
+    spotTimer = setTimeout(function(){
+      if (!sheet.classList.contains('show') || coached.start || !firstRow) return;
+      var r = rectInScreen(firstRow), pad = 6;
+      var hole = $('spotHole');
+      hole.style.left   = (r.x - pad) + 'px';
+      hole.style.top    = (r.y - pad) + 'px';
+      hole.style.width  = (r.w + pad * 2) + 'px';
+      hole.style.height = (r.h + pad * 2) + 'px';
+      var tip = $('spotTip');
+      tip.style.left = (r.x - pad + 2) + 'px';
+      tip.style.top  = (r.y + r.h + pad + 14) + 'px';
+      $('spot').classList.add('show');
+    }, 1000);
+  }
+  function clearSpot(){
+    clearTimeout(spotTimer);
+    $('spot').classList.remove('show');
+  }
+  $('spotHole').addEventListener('click', function(e){
+    e.stopPropagation();
+    coached.start = true;
+    jumpToSection(SECTIONS[0].id, SECTIONS[0].name);
+  });
+  $('spotHole').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); e.stopPropagation();
+      coached.start = true; jumpToSection(SECTIONS[0].id, SECTIONS[0].name); }
+  });
+  /* Tapping the dark area just dismisses it; the menu stays open. */
+  $('spot').addEventListener('click', function(){ coached.start = true; clearSpot(); });
   $('menuBtn').addEventListener('click', function(){
     if (screenEl.classList.contains('manual')) return;   // assist-mode feature only
     openLenders(false); openSheet(true);
@@ -2367,6 +2451,8 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
         aside.appendChild(u);
         row.appendChild(aside);
       }
+
+      if (n === 0) firstRow = row;
 
       host.appendChild(row);
       if (n < SECTIONS.length - 1) host.appendChild(el('div','rule'));
@@ -2502,7 +2588,9 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   function boot(){
     thread.innerHTML = ''; quicks.innerHTML = '';
     values = {}; busy = false; decks = []; seen = { lenders:false, done:false };
-    coached = { menu:false, pill:false }; awaitingMenu = false; journeyStarted = false;
+    coached = { menu:false, pill:false, start:false }; awaitingMenu = false; journeyStarted = false;
+    clearTimeout(spotTimer);
+    $('spot').classList.remove('show');
     $('coach').classList.remove('show');
     $('pillBtn').classList.remove('attract');
     SECTIONS.forEach(function(s){ s.done = 0; if (s.docs) s.docs.have = 0; });
@@ -2606,6 +2694,14 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     });
   }
 
+  /* Drop the pending opener card: something else has taken its place. */
+  function endMenuCoach(){
+    awaitingMenu = false;
+    coached.menu = true;
+    coached.start = true;
+    $('coach').classList.remove('show');
+  }
+
   function finishMenuCoach(openIt){
     if (!awaitingMenu) return;
     coached.menu = true;
@@ -2617,6 +2713,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   function resumeIntro(){
     if (!awaitingMenu) return;
     awaitingMenu = false;
+    coached.start = true;      // the first card is on its way; no need to point
     agentSays([INTRO[2]], 450, function(){ renderDeck(0, 0, null); });
   }
 
