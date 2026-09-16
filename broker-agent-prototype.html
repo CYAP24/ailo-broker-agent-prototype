@@ -7378,11 +7378,6 @@ var LAB_TILES = [
       if (g.sec === 'income'){
         list.push({ t:'Fill this section from my payslip',
           go:function(){ fillFromDoc('Payslip', FAST[1], 'payslip'); } });
-        list.push({ t:'Does my job history affect approval?', go:function(){
-          ai('Time in the job counts for more than the salary with most lenders — six months is the ' +
-             'usual threshold. Casual and contract work is fine, it just changes which lenders look ' +
-             'at you first.');
-        }});
       }
       list.push({ t:'Help me fast track application', go:function(){ startFastTrack(); } });
       list.push({ t:'View current lender options',    go:function(){ lendersFromChat('options'); } });
