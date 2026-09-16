@@ -1767,11 +1767,12 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 .lab-draft .ls-list{padding-top:14px}
 
 /* ---- V4 application chrome, from the AILO 4.0 Figma (node 128-4865) ---- */
-.lab-draft .v4head{flex:none;background:#fff;padding:18px 16px 0;position:relative;z-index:6}
-.lab-draft .v4head .row{display:flex;align-items:center;gap:10px;height:30px}
-.lab-draft .v4head .back{flex:none;width:26px;height:24px;display:flex;align-items:center}
-.lab-draft .v4head .lgo{flex:none;width:26px;height:16px;display:flex}
-.lab-draft .v4head .ttl{
+/* V6 reuses the same header, so both variants share these rules */
+.lab-draft .v4head,.lab-dock .v4head{flex:none;background:#fff;padding:18px 16px 0;position:relative;z-index:6}
+.lab-draft .v4head .row,.lab-dock .v4head .row{display:flex;align-items:center;gap:10px;height:30px}
+.lab-draft .v4head .back,.lab-dock .v4head .back{flex:none;width:26px;height:24px;display:flex;align-items:center}
+.lab-draft .v4head .lgo,.lab-dock .v4head .lgo{flex:none;width:26px;height:16px;display:flex}
+.lab-draft .v4head .ttl,.lab-dock .v4head .ttl{
   flex:1;text-align:center;margin-right:52px;
   font-size:16px;font-weight:600;line-height:24px;color:var(--ink-tert);
 }
@@ -2066,6 +2067,181 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   .stage{padding:20px 16px 40px}
   .stage-body{gap:28px}
 }
+
+/* ================= V6 · Broker assist ================= */
+/* A sheet parked off-screen with translateY still counts as scrollable overflow,
+   so a focus ring can scroll the whole phone out of position. Clip, don't scroll. */
+.screen.lab{overflow:clip}
+
+/* the two chat bubbles, kept here now the earlier explorations are gone */
+.pop-a{font-size:12.5px;line-height:1.55;color:var(--ink)}
+.pop-m{align-self:flex-end;max-width:82%;background:var(--brand);color:#fff;border-radius:12px 12px 3px 12px;
+  padding:6px 10px;font-size:12px;font-weight:500;line-height:1.45}
+
+/* ---- V6 manual form with a Broker assist dock above the Continue button ---- */
+
+/* the lender chip row, straight from Version 2: locked, then openable */
+.dk-chip{
+  flex:none;position:relative;z-index:5;background:#fff;
+  display:flex;justify-content:center;padding:6px 16px 10px;transition:opacity .22s;
+}
+.dk-chip:empty{display:none}
+/* the sheet's own title bar stands in for the chip while it's open */
+.dk-chip.under{opacity:0;pointer-events:none}
+.dk-lock{
+  display:flex;align-items:center;gap:8px;white-space:nowrap;
+  background:rgba(233,236,239,.6);border:1px solid var(--muted-line);border-radius:8px;
+  padding:10px 12px;font-size:13px;font-weight:500;color:var(--ink);
+}
+.dk-lock svg{display:block;flex:none}
+.dk-open{
+  display:flex;gap:8px;align-items:center;justify-content:center;
+  background:var(--muted-fill);border:1px solid var(--muted-line);border-radius:8px;
+  padding:10px 12px;filter:drop-shadow(2px 2px 3px rgba(0,0,0,.08));
+  font-size:13px;font-weight:500;color:var(--ink);
+  animation:bump .5s cubic-bezier(.22,.9,.26,1);
+}
+.dk-open svg{display:block;flex:none}
+.dk-open .caret{display:flex;transition:transform .22s}
+.dk-open.on .caret{transform:rotate(180deg)}
+
+/* the dock now shares the footer tray, directly above Continue */
+.labtray{flex:none;position:relative;z-index:9;background:#fff;border-top:1px solid var(--line)}
+.lab-dock .lab-foot{border-top:none}
+.dockzone{position:relative;padding:12px 20px 0}
+.dock{
+  position:relative;display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;
+  background:#FBF8FF;border:1px solid var(--brand-300);border-radius:12px;padding:11px 12px;
+  transition:border-color .16s,background .16s;
+}
+.dock:hover{border-color:var(--brand);background:#F7F0FF}
+.dock .lab-agent{flex:none}
+.dock .dtx{flex:1;font-size:13px;font-weight:700;color:var(--ink-900);text-align:left}
+.dock .cnt{
+  flex:none;min-width:18px;height:18px;padding:0 5px;border-radius:99px;
+  background:#F33829;color:#fff;font-size:10.5px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.dock .cnt.off{display:none}
+.dock .cv{flex:none;display:flex;color:var(--brand);transition:transform .22s;transform:rotate(180deg)}
+.dock.open .cv{transform:none}
+.dock.pulse{animation:dockPulse 1.6s ease-in-out 2}
+@keyframes dockPulse{0%,100%{background:#FBF8FF}50%{background:#EFE4FF}}
+
+/* the prompt bubbles: one rail above the dock that runs off the screen edge.
+   Drag sideways to see the rest; flick one down, left or right to be rid of it. */
+.dkbubs{
+  position:absolute;left:0;right:0;bottom:calc(100% + 4px);z-index:10;
+  display:flex;align-items:center;gap:8px;padding:8px 20px 10px;
+  overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+  opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .28s,transform .28s;
+}
+.dkbubs.show{opacity:1;transform:none;pointer-events:auto}
+.dkbubs::-webkit-scrollbar{display:none}
+.dkbub{
+  flex:none;white-space:nowrap;border:none;touch-action:none;cursor:grab;
+  background:#F3EAFF;border-radius:14px;padding:9px 14px;
+  font-size:12px;font-weight:600;color:var(--ink-900);line-height:1.3;
+  box-shadow:0 8px 18px -16px rgba(41,20,90,.55);
+  transition:transform .2s cubic-bezier(.22,.9,.26,1),opacity .2s;
+}
+.dkbub:active{cursor:grabbing}
+
+/* the chat sheet */
+.asheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:11;height:78%;
+  background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -20px 50px -30px rgba(41,20,90,.6);
+  display:flex;flex-direction:column;
+  transform:translateY(101%);transition:transform .38s cubic-bezier(.32,.72,0,1);
+}
+.asheet.show{transform:none}
+.asheet-top{
+  flex:none;display:flex;align-items:center;gap:10px;padding:14px 16px 10px;border-bottom:1px solid var(--line);
+}
+.asheet-top .at{flex:1;display:flex;flex-direction:column;gap:1px}
+.asheet-top .at b{font-size:13.5px;font-weight:700;color:var(--ink-900)}
+.asheet-top .at span{font-size:11px;color:var(--ink-tert)}
+.asheet-top .x{flex:none;font-size:19px;line-height:1;color:var(--ink-tert);padding:0 4px}
+.asheet .achat{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.asheet .achat::-webkit-scrollbar{display:none}
+
+/* the four standing prompts */
+.dkprompts{flex:none;display:flex;flex-direction:column;gap:7px;padding:2px 16px 12px}
+.dkp{
+  width:100%;display:flex;align-items:center;gap:9px;text-align:left;
+  border:1px solid var(--line);border-radius:99px;padding:9px 13px;background:#fff;
+  font-size:12.5px;font-weight:600;color:var(--ink-900);
+  transition:border-color .15s,background .15s;
+}
+.dkp:hover{border-color:var(--brand);background:#FBF7FF}
+.dkp .si{flex:none;width:20px;height:20px;border-radius:6px;background:var(--brand-tint);
+  display:flex;align-items:center;justify-content:center}
+
+/* the composer, with room to breathe underneath it */
+.dkin{
+  flex:none;display:flex;align-items:center;gap:8px;margin:0 16px;
+  border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;
+}
+.dkin input{
+  flex:1;min-width:0;border:none;outline:none;background:none;font-family:var(--font);
+  font-size:12.5px;color:var(--ink);
+}
+.dkin input::placeholder{color:var(--hint)}
+.dkin button{flex:none;width:26px;height:26px;border-radius:7px;background:var(--brand);
+  display:flex;align-items:center;justify-content:center}
+.dkpad{flex:none;height:44px}
+
+/* Version 2's manual mode breaks personal info with sub-headings; so does this */
+.lab-dock .lab-grp .ghead{margin:14px 0 -4px;font-size:13.5px;font-weight:700;color:var(--brand)}
+.lab-dock .lab-grp .ghead:first-of-type{margin-top:2px}
+
+/* what the pre-fill couldn't settle on its own */
+.lab-dock .needs{border-color:#F0C674;background:#FFFCF5}
+.nq{
+  align-self:flex-start;display:inline-flex;align-items:center;gap:5px;margin-top:2px;
+  border-radius:99px;background:#FEF3E2;color:#B45309;padding:3px 9px;font-size:10.5px;font-weight:700;
+}
+.nq svg{display:block;flex:none}
+
+/* fast-track: the short list, then one document at a time */
+.dkload{
+  display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:12px;
+  padding:12px;background:#FBF8FF;animation:cardIn .26s cubic-bezier(.22,.9,.26,1) both;
+}
+.dkload .ring{
+  flex:none;width:17px;height:17px;border-radius:50%;
+  border:2px solid var(--brand-tint);border-top-color:var(--brand);
+  animation:spin .75s linear infinite;
+}
+.dkload .lt{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.dkload .lt b{font-size:12.5px;font-weight:700;color:var(--ink-900)}
+.dkload .pl{display:block;height:4px;border-radius:99px;background:var(--brand-tint);overflow:hidden}
+.dkload .pl i{
+  display:block;height:100%;width:6%;border-radius:99px;background:var(--brand);
+  transition:width 2.1s cubic-bezier(.3,.8,.3,1);
+}
+.dkbul{margin:0;padding-left:17px;display:flex;flex-direction:column;gap:4px}
+.dkbul li{font-size:12.5px;line-height:1.5;color:var(--ink)}
+.dkbul li::marker{color:var(--brand)}
+.dkup{
+  display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;
+  padding:10px 12px;background:#fff;animation:cardIn .26s cubic-bezier(.22,.9,.26,1) both;
+}
+.dkup .ic{flex:none;width:34px;height:34px;border-radius:9px;background:var(--brand-tint);
+  display:flex;align-items:center;justify-content:center}
+.dkup .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.dkup .tx b{font-size:12.5px;font-weight:700;color:var(--ink-900)}
+.dkup .tx span{display:block;font-size:11px;color:var(--ink-tert);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dkup .go{flex:none;border-radius:99px;background:var(--brand);color:#fff;
+  padding:8px 14px;font-size:11.5px;font-weight:700;transition:transform .12s}
+.dkup .go:active{transform:scale(.96)}
+.dkup.done{border-color:#BFE6D2;background:#F6FBF8}
+.dkup.done .ic{background:#E9F7EF}
+.dkup.done .go{background:#E9F7EF;color:#177245;pointer-events:none}
+
+/* the lender sheet drops in below the header; JS pins it to the real heights */
+.lab-dock .lsheet{top:76px;z-index:8}
+
 </style>
 
 <div class="stage">
@@ -2080,6 +2256,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     <button class="tab"    type="button" role="tab" data-v="2" aria-selected="false">V2 · Two modes</button>
     <button class="tab"    type="button" role="tab" data-v="draft" aria-selected="false">V4 · Draft &amp; approve</button>
     <button class="tab"    type="button" role="tab" data-v="5" aria-selected="false">V5 · Section assist</button>
+    <button class="tab"    type="button" role="tab" data-v="dock"  aria-selected="false">V6 · Broker assist</button>
     <button class="tab"    type="button" role="tab" data-v="3" aria-selected="false">Return Journey addition</button>
   </div>
 
@@ -2089,6 +2266,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
       <div class="version"    data-version="2"></div>
       <div class="version"    data-version="draft"></div>
       <div class="version"    data-version="5"></div>
+      <div class="version"    data-version="dock"></div>
 
       <div class="version" data-version="3">
         <div class="device-col">
@@ -2549,6 +2727,51 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
       </section>
 
       <p class="foot">Only <code>Personal</code> is live on the widget. Upload, scanning and verification are simulated — every document fills the section it belongs to.</p>
+    </aside>
+
+    <aside class="notes" data-notes="dock" hidden>
+      <h2 class="n-title">V6 · Manual form, Broker assist dock</h2>
+
+      <div class="meter">
+        <div class="mtop"><span class="mlab">AI reliance</span><span class="mval">≈ 35% AI · 65% manual</span></div>
+        <div class="track"><i style="width:35%"></i></div>
+        <p class="mfoot">The form is the product; Broker assist sits above Continue and can be ignored.</p>
+      </div>
+
+      <section>
+        <h3>Overview</h3>
+        <p>Starts on the same loanoptions.ai widget as versions 1 and 2, with the personal loan the only live tile. Loan use, then preferences, then the SMS check — which turns the locked <b>Unlock lenders soon</b> chip into the working <b>23 lenders</b> dropdown from Version 2. From there it’s an ordinary form with the assist dock parked directly above the Continue button.</p>
+      </section>
+
+      <section>
+        <h3>How it works</h3>
+        <ul>
+          <li>The dock carries an unread badge counting the four prompts, with the same four as bubbles on a rail above it — drag sideways for the rest, flick one down or off the end to be rid of it.</li>
+          <li>Opening it gives four standing prompts: fill from licence, view lender options, view loan rates, fast-track.</li>
+          <li>Either lender prompt opens the 23-lender bar; fast-track walks the three documents one at a time, each with its own upload button.</li>
+          <li>Anything the assistant fills is written into the visible form, never into a hidden state.</li>
+        </ul>
+      </section>
+
+      <section class="pros">
+        <h3>Pros</h3>
+        <ul>
+          <li>Lowest adoption risk of the assisted options — nothing changes if you never open it.</li>
+          <li>Easy to A/B: the same form with the dock on or off.</li>
+          <li>Chat is still available in full for customers who want it.</li>
+        </ul>
+      </section>
+
+      <section class="cons">
+        <h3>Cons</h3>
+        <ul>
+          <li>Most customers will never open it, so the AI value has to come from the bubbles.</li>
+          <li>Badly timed bubbles read as interruption; this needs real tuning.</li>
+          <li>Two surfaces to maintain for one flow.</li>
+        </ul>
+      </section>
+
+      <p class="foot">Use the demo code on the SMS screen, then watch the chip up top change.</p>
     </aside>
 
   </div>
@@ -4567,6 +4790,9 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   LAB_SVG.upload = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 15V4m0 0 4 4m-4-4L8 8" stroke="#5614BB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V16" stroke="#5614BB" stroke-width="2" stroke-linecap="round"/></svg>';
   LAB_SVG.plus = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="#5614BB" stroke-width="2.2" stroke-linecap="round"/></svg>';
   LAB_SVG.swipe = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 6 5 12l4 6M15 6l4 6-4 6" stroke="#6C757D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  /* the lender-sheet furniture, lifted straight from the Version 2 markup */
+  LAB_SVG.tagFilter = '<svg width="15.0187" height="15" viewBox="0 0 15.0187 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14.4614 6.16141L8.85725 0.558198C8.49973 0.200784 8.01489 0 7.50936 0C7.00382 0 6.51898 0.200784 6.16146 0.558198L0.557296 6.16141C0.200406 6.5194 0 7.00428 0 7.50978C0 8.01528 0.200406 8.50016 0.557296 8.85815L6.16146 14.4595C6.52445 14.8064 7.00723 15 7.50936 15C8.01148 15 8.49426 14.8064 8.85725 14.4595L14.4614 8.85815C14.8183 8.50016 15.0187 8.01528 15.0187 7.50978C15.0187 7.00428 14.8183 6.5194 14.4614 6.16141ZM10.3691 9.40723H4.6496V8.45398H10.3691V9.40723ZM10.3691 6.54747H4.6496V5.59422H10.3691V6.54747Z" fill="#6B7280"/></svg>';
+  LAB_SVG.closePlus = '<svg width="19.3652" height="19.3652" viewBox="0 0 19.3652 19.3652" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10.5869 8.7793H19.3652V10.5869H10.5869V19.3652H8.77832V10.5869H0V8.7793H8.77832V0H10.5869V8.7793Z" fill="#6C757D"/></svg>';
   LAB_SVG.alert = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 8v5m0 3h.01M10.3 3.9 2.6 17.4A2 2 0 0 0 4.3 20.4h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   /* the same service tiles versions 1 and 2 show, with personal the only live one */
@@ -7110,6 +7336,991 @@ var LAB_TILES = [
     fit();
     return { resize: fit };
   }
+
+  /* ================= V6 · manual form, Broker assist dock (≈35% AI) =================
+     Starts on the loanoptions.ai widget, exactly as versions 1 and 2 do, with the
+     personal loan the only live tile. Loan use, then preferences, then the SMS
+     check that turns the locked chip into the 23-lender dropdown, then the form —
+     with the assist dock parked directly above Continue the whole way down. */
+  LAB_VARIANTS.dock = function(panel){
+    var kit = labKit(panel, 'dock', { tag:'', blurb:'' });
+    var screen = kit.screen;
+
+    var PURPOSES = ['Debt consolidation','Travel','Home improvement','Medical or dental','Something else'];
+    var PREFS = ['Low repayment','Best rate','Fast approval','Low doc requirement'];
+
+    /* placeholder figures, the same set Version 2 shows */
+    var FIGS = {
+      'Low repayment':      { repay:'$1,029.53', adv:'6.4%', comp:'6.6%' },
+      'Best rate':          { repay:'$1,061.20', adv:'5.9%', comp:'6.1%' },
+      'Fast approval':      { repay:'$1,084.75', adv:'6.8%', comp:'7.0%' },
+      'Low doc requirement':{ repay:'$1,112.40', adv:'7.2%', comp:'7.4%' }
+    };
+    var LENDER_COUNT = 23, CLEAR = 3;   // the top three read clearly, the rest stay blurred
+
+    var head, barFill, barPc, chipRow, body, tray, dockZone, dock, dockCnt, rail;
+    var foot, backBtn, nextBtn, lsheet, lsList, lsLabel, lsMenu, sheet, chatBox, promptBox;
+    var verified = false, lendersOpen = false, chatOpen = false, unread = 0;
+    var pref = PREFS[0], prefTouched = false;
+    var at = 0, refs = [], bubblesOff = false, dropped = {}, bubbleT = null, backTo = null;
+    var needs = {};                        // fields flagged after a pre-fill
+
+    /* ---------- the four standing prompts ---------- */
+    var PROMPTS = [
+      { t:'Fill this section with my licence', go:function(){ fillFromLicence(); } },
+      { t:'Help me fast track application',    go:function(){ startFastTrack(); } },
+      { t:'View current lender options',       go:function(){ lendersFromChat('options'); } },
+      { t:'View current loan rates',           go:function(){ lendersFromChat('rates'); } }
+    ];
+
+    /* ---------- the three things a fast-track needs ---------- */
+    var FAST = [
+      { k:'licence', t:'Driver’s licence', d:'A photo of the front is enough', ic:LAB_SVG.idCard,
+        file:'licence-front.jpg', btn:'Upload', done:'Uploaded',
+        ask:'First up — your driver’s licence.' },
+      { k:'payslip', t:'Most recent payslip', d:'A PDF or a photo, whichever is handy', ic:LAB_SVG.payslip,
+        file:'payslip-august.pdf', btn:'Upload', done:'Uploaded',
+        ask:'Next — your most recent payslip.' },
+      { k:'bank', t:'Bank details', d:'Read-only, and no passwords are stored', ic:LAB_SVG.bank,
+        file:'Connected · Westpac', btn:'Connect', done:'Connected',
+        ask:'Last one — connect your bank so your income can be verified.' }
+    ];
+
+    function boot(){
+      verified = false; lendersOpen = false; chatOpen = false;
+      unread = PROMPTS.length;               // the badge counts the prompts waiting inside
+      pref = PREFS[0]; prefTouched = false;
+      at = 0; refs = []; bubblesOff = false; dropped = {}; backTo = null; needs = {};
+      clearTimeout(bubbleT);
+      kit.values = {};
+      kit.product = 'Personal';
+      kit.groups = buildGroups();
+      home();
+    }
+
+    /* The loan questions get their own screens. Personal info is one long screen
+       broken by the same sub-headings Version 2's manual mode uses, and
+       employment follows on its own. */
+    function buildGroups(){
+      var all = {};
+      labModel('Personal').forEach(function(g){
+        g.qs.forEach(function(q){ all[q.key] = q; });
+      });
+      var blocks = [
+        { head:'Sure! My name is…',           keys:['first','middle','last'] },
+        { head:'I’m also…',                   keys:['gender','dob'] },
+        { head:'You can contact me through…', keys:['mobile','email'] },
+        { head:'My licence details are…',     keys:['licence','expiry','state'] }
+      ].map(function(b){
+        return { head:b.head, qs:b.keys.map(function(k){ return all[k]; }) };
+      });
+
+      var personal = {
+        sec:'personal',
+        title:'Great! Tell me more about yourself',
+        sub:'Fill them in, or let Broker assist read them off your licence.',
+        blocks:blocks,
+        qs:[]
+      };
+      blocks.forEach(function(b){ b.qs.forEach(function(q){ personal.qs.push(q); }); });
+
+      var job = labModel('Personal').filter(function(g){ return g.sec === 'income'; })[0];
+      return [personal, job];
+    }
+
+    /* ---------- the loanoptions.ai widget, personal loan only ---------- */
+    function home(){
+      screen.innerHTML = '';
+      var h = el('div','home');
+      var hh = el('div','home-head');
+      hh.innerHTML = '<div class="bar"><span class="lo-logo">' + LAB_SVG.loLogo +
+        '<b>loanoptions.ai</b></span><span class="lo-menu">' + LAB_SVG.burger + '</span></div>';
+      h.appendChild(hh);
+
+      var hero = el('div','home-hero');
+      hero.appendChild(el('h1','home-title','AI that compares<br>90+ lenders <em>instantly</em>'));
+
+      var card = el('div','home-card');
+      var top = el('div','home-card-top');
+      top.appendChild(el('h2', null, 'Start comparing in 5 mins'));
+      top.appendChild(el('span','home-tag', LAB_SVG.agent +
+        '<span>Apply with the help of our digital assistant!</span>'));
+      card.appendChild(top);
+
+      var grid = el('div','home-grid');
+      LAB_TILES.forEach(function(t){
+        var live = t.key === 'personal';
+        var b = el('button','home-tile' + (live ? '' : ' soon'));
+        b.type = 'button';
+        b.innerHTML = labSvcIcon(t.key, t.d) + '<span>' + t.label + '</span>';
+        b.addEventListener('click', function(){
+          if (!live){ kit.toast('This version prototypes the personal loan journey only.'); return; }
+          shell();
+          loanUse();
+        });
+        grid.appendChild(b);
+      });
+      card.appendChild(grid);
+
+      var cfoot = el('div','home-foot');
+      cfoot.innerHTML = '<p class="home-disc"><span>No data shared. No bias deals. <b>No dramas.</b></span></p>' +
+        '<p class="home-credit">No impact to your credit score</p>';
+      card.appendChild(cfoot);
+
+      hero.appendChild(card);
+      h.appendChild(hero);
+      screen.appendChild(h);
+      screen.appendChild(kit.toastEl);
+    }
+
+    /* ---------- application chrome ---------- */
+    function shell(){
+      screen.innerHTML = '';
+
+      head = el('div','v4head');
+      var row = el('div','row');
+      var back = el('button','back');
+      back.type = 'button';
+      back.setAttribute('aria-label','Back');
+      back.innerHTML = LAB_SVG.back;
+      back.addEventListener('click', goBack);
+      row.appendChild(back);
+      var lg = el('span','lgo');
+      lg.innerHTML = LAB_SVG.mark;
+      row.appendChild(lg);
+      row.appendChild(el('span','ttl','Application'));
+      head.appendChild(row);
+      var pb = el('div','v4bar','<span class="tr"><i></i></span><span class="pc">5%</span>');
+      head.appendChild(pb);
+      barFill = pb.querySelector('i');
+      barPc = pb.querySelector('.pc');
+
+      chipRow = el('div','dk-chip');
+      body = el('div','lab-body');
+
+      /* dock and Continue share one tray, so the dock sits above the button */
+      tray = el('div','labtray');
+      dockZone = el('div','dockzone');
+      rail = el('div','dkbubs');
+      dock = el('button','dock');
+      dock.type = 'button';
+      var av = el('span','lab-agent');
+      av.innerHTML = LAB_SVG.agent;
+      dock.appendChild(av);
+      dock.appendChild(el('span','dtx','Broker assist'));
+      dockCnt = el('span','cnt', String(unread));
+      dock.appendChild(dockCnt);
+      var cv = el('span','cv');
+      cv.innerHTML = LAB_SVG.cv;
+      dock.appendChild(cv);
+      dock.addEventListener('click', function(){ openChat(!chatOpen); });
+      dockZone.appendChild(rail);
+      dockZone.appendChild(dock);
+
+      foot = el('div','lab-foot');
+      backBtn = el('button','lf-back','Back');
+      backBtn.type = 'button';
+      backBtn.addEventListener('click', goBack);
+      nextBtn = el('button','lf-next','Continue');
+      nextBtn.type = 'button';
+      foot.appendChild(backBtn);
+      foot.appendChild(nextBtn);
+      tray.appendChild(dockZone);
+      tray.appendChild(foot);
+
+      buildLenders();
+      buildChat();
+
+      screen.appendChild(head);
+      screen.appendChild(chipRow);
+      screen.appendChild(body);
+      screen.appendChild(tray);
+      screen.appendChild(lsheet);
+      screen.appendChild(sheet);
+      screen.appendChild(kit.toastEl);
+
+      /* belt and braces for engines without overflow:clip */
+      screen.addEventListener('scroll', function(){ screen.scrollTop = 0; screen.scrollLeft = 0; });
+
+      showDock(false);
+      paintChip();
+      paintCnt();
+      /* the lender sheet hangs off the header and stops above the tray */
+      requestAnimationFrame(sizeSheet);
+      setTimeout(sizeSheet, 80);
+    }
+
+    function sizeSheet(){
+      if (!lsheet || !head) return;
+      if (head.offsetHeight) lsheet.style.top = head.offsetHeight + 'px';
+      lsheet.style.bottom = (tray.offsetHeight || 0) + 'px';
+    }
+
+    function showDock(on){
+      dockZone.style.display = on ? '' : 'none';
+      if (!on) hideBubbles();
+      sizeSheet();
+    }
+
+    function pct(n){
+      n = Math.max(2, Math.min(100, Math.round(n)));
+      barFill.style.width = n + '%';
+      barPc.textContent = n + '%';
+    }
+
+    function setFoot(label, on, fn, backOn){
+      foot.style.display = '';
+      nextBtn.textContent = label;
+      nextBtn.disabled = !on;
+      nextBtn.onclick = fn;
+      backBtn.disabled = !backOn;
+    }
+
+    function goBack(){ if (backTo) backTo(); }
+
+    /* ---------- the lender chip: locked, then a working dropdown ---------- */
+    function paintChip(){
+      chipRow.innerHTML = '';
+      if (!verified){
+        chipRow.appendChild(el('div','dk-lock', LAB_SVG.lock + '<span>Unlock lenders soon</span>'));
+      } else {
+        var p = el('button','dk-open' + (lendersOpen ? ' on' : ''));
+        p.type = 'button';
+        p.setAttribute('aria-expanded', lendersOpen ? 'true' : 'false');
+        p.innerHTML = LAB_SVG.lenders + '<span>' + LENDER_COUNT + ' lenders</span>' +
+          '<span class="caret">' + LAB_SVG.cv + '</span>';
+        p.addEventListener('click', function(){ openLenders(!lendersOpen); });
+        chipRow.appendChild(p);
+      }
+      chipRow.classList.toggle('under', lendersOpen);
+      sizeSheet();
+    }
+
+    function buildLenders(){
+      lsheet = el('aside','lsheet');
+      lsheet.setAttribute('aria-label','Lender options');
+
+      var top = el('div','ls-top','<span class="ttl">' + LAB_SVG.lenders +
+        '<span>' + LENDER_COUNT + ' lenders</span></span>');
+      var x = el('button','ls-close');
+      x.type = 'button';
+      x.setAttribute('aria-label','Close lender options');
+      x.innerHTML = LAB_SVG.closePlus;
+      x.addEventListener('click', function(){ openLenders(false); });
+      top.appendChild(x);
+      lsheet.appendChild(top);
+
+      var pw = el('div','ls-prefwrap');
+      var pb = el('button','ls-pref');
+      pb.type = 'button';
+      pb.setAttribute('aria-haspopup','listbox');
+      pb.innerHTML = '<span class="lbl">' + LAB_SVG.tagFilter + '<span>' + pref + '</span></span>' +
+        '<span class="cv">' + LAB_SVG.cv + '</span>';
+      lsLabel = pb.querySelector('.lbl > span');
+      pb.addEventListener('click', function(){
+        var on = lsheet.classList.toggle('picking');
+        pb.setAttribute('aria-expanded', on ? 'true' : 'false');
+      });
+      pw.appendChild(pb);
+      lsMenu = el('div','ls-menu');
+      lsMenu.setAttribute('role','listbox');
+      pw.appendChild(lsMenu);
+      lsheet.appendChild(pw);
+
+      lsList = el('div','ls-list');
+      lsheet.appendChild(lsList);
+    }
+
+    function paintPrefMenu(){
+      lsMenu.innerHTML = '';
+      PREFS.forEach(function(o){
+        var b = el('button', o === pref ? 'on' : '', o);
+        b.type = 'button';
+        b.setAttribute('role','option');
+        b.setAttribute('aria-selected', o === pref ? 'true' : 'false');
+        b.addEventListener('click', function(){
+          pref = o;
+          prefTouched = true;
+          lsheet.classList.remove('picking');
+          paintPrefMenu();
+          paintLenders();
+        });
+        lsMenu.appendChild(b);
+      });
+    }
+
+    function lenderCard(i, fig){
+      var card = el('div','lcard' + (i >= CLEAR ? ' locked' : ''));
+
+      var top = el('div','lc-top');
+      var logo = el('img','lc-logo');
+      logo.src = 'assets/pepper.png';
+      logo.alt = 'Lender';
+      top.appendChild(logo);
+      var sw = el('button','lc-sw','<span class="track"></span><span class="t">Preferred</span>');
+      sw.type = 'button';
+      sw.setAttribute('aria-pressed','false');
+      sw.addEventListener('click', function(){
+        var on = sw.classList.toggle('on');
+        sw.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      top.appendChild(sw);
+      card.appendChild(top);
+
+      var stats = el('div','lc-stats');
+      [[fig.repay,'Monthly Repayments'],[fig.adv,'Advertised Rate'],[fig.comp,'Comparison Rate']]
+        .forEach(function(pair){
+          var s = el('div','lc-stat');
+          s.appendChild(el('div','v', pair[0]));
+          s.appendChild(el('div','l', pair[1]));
+          stats.appendChild(s);
+        });
+      card.appendChild(stats);
+
+      var more = el('button','lc-more','More info');
+      more.type = 'button';
+      more.addEventListener('click', function(){
+        kit.toast(i >= CLEAR ? 'Complete more of your application to unlock this option.'
+                             : 'Lender detail isn’t part of this prototype.');
+      });
+      card.appendChild(more);
+      return card;
+    }
+
+    function paintLenders(){
+      var fig = FIGS[pref] || FIGS[PREFS[0]];
+      lsList.innerHTML = '';
+      for (var i = 0; i < LENDER_COUNT; i++) lsList.appendChild(lenderCard(i, fig));
+      lsList.scrollTop = 0;
+      lsLabel.textContent = pref;
+    }
+
+    function openLenders(on){
+      if (on && !verified) return;
+      lendersOpen = on;
+      lsheet.classList.toggle('show', on);
+      if (!on){
+        lsheet.classList.remove('picking');
+        paintChip();
+        return;
+      }
+      openChat(false);
+      hideBubbles();
+      if (!prefTouched && kit.values.prefs) pref = kit.values.prefs;
+      paintPrefMenu();
+      paintLenders();
+      paintChip();
+      sizeSheet();
+    }
+
+    /* ---------- the chat sheet ---------- */
+    function buildChat(){
+      sheet = el('div','asheet');
+
+      var top = el('div','asheet-top');
+      var av = el('span','lab-agent');
+      av.innerHTML = LAB_SVG.agent;
+      top.appendChild(av);
+      top.appendChild(el('span','at','<b>Broker assist</b>'));
+      var x = el('button','x','×');
+      x.type = 'button';
+      x.setAttribute('aria-label','Close');
+      x.addEventListener('click', function(){ openChat(false); });
+      top.appendChild(x);
+
+      chatBox = el('div','achat');
+      promptBox = el('div','dkprompts');
+
+      var inRow = el('div','dkin');
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Ask Broker assist anything…';
+      var sb = el('button', null, LAB_SVG.send);
+      sb.type = 'button';
+      sb.setAttribute('aria-label','Send');
+      function fire(){
+        var t = input.value.trim();
+        if (!t) return;
+        input.value = '';
+        me(t);
+        setTimeout(function(){
+          ai('I only act on what’s in front of you. Pick one of the prompts above and I’ll do it now.');
+        }, 440);
+      }
+      input.addEventListener('keydown', function(e){ if (e.key === 'Enter') fire(); });
+      sb.addEventListener('click', fire);
+      inRow.appendChild(input);
+      inRow.appendChild(sb);
+
+      sheet.appendChild(top);
+      sheet.appendChild(chatBox);
+      sheet.appendChild(promptBox);
+      sheet.appendChild(inRow);
+      sheet.appendChild(el('div','dkpad'));
+      paintPrompts();
+    }
+
+    function me(t){ chatBox.appendChild(el('div','pop-m', t)); scrollChat(); }
+    function ai(t){ var n = el('div','pop-a', t); chatBox.appendChild(n); scrollChat(); return n; }
+    function scrollChat(){ chatBox.scrollTop = chatBox.scrollHeight; }
+
+    function paintPrompts(){
+      promptBox.innerHTML = '';
+      PROMPTS.forEach(function(p){
+        var b = el('button','dkp','<span class="si">' + LAB_SVG.spark + '</span><span>' + p.t + '</span>');
+        b.type = 'button';
+        b.addEventListener('click', function(){
+          me(p.t);
+          setTimeout(p.go, 380);
+        });
+        promptBox.appendChild(b);
+      });
+    }
+
+    function openChat(on){
+      chatOpen = on;
+      sheet.classList.toggle('show', on);
+      dock.classList.toggle('open', on);
+      if (!on) return;
+      openLenders(false);
+      /* once the drawer has been opened the prompts live inside it, not above it */
+      bubblesOff = true;
+      clearTimeout(bubbleT);
+      hideBubbles();
+      unread = 0;
+      paintCnt();
+      if (!chatBox.childNodes.length){
+        ai('I can see everything on this screen. Here’s what I can do from here.');
+      }
+      scrollChat();
+    }
+
+    function paintCnt(){
+      dockCnt.textContent = String(unread);
+      dockCnt.classList.toggle('off', unread < 1);
+    }
+
+    /* ---------- what the prompts do ---------- */
+    /* Nothing is filled on the strength of the ask alone — the licence has to
+       turn up first, so the prompt puts an upload in front of you. */
+    function fillFromLicence(){
+      var own = refs.filter(function(r){ return r.q.src === 'Licence'; });
+      if (!own.length){
+        ai('Nothing on this screen comes off your licence — I’ll offer it again on the ID questions.');
+        return;
+      }
+      if (!own.filter(function(r){ return !r.get(); }).length){
+        ai('Everything your licence covers on this screen is already filled in.');
+        return;
+      }
+      ai('Happy to. Upload a photo of your licence and I’ll read the fields straight off it.');
+      chatBox.appendChild(uploadRow(FAST[0], function(){
+        ai('Reading it now…');
+        setTimeout(function(){
+          var n = fillGroup('Licence');
+          ai('Got it — ' + n + ' field' + (n === 1 ? '' : 's') +
+             ' filled from your licence. Type over anything I got wrong.');
+          setTimeout(function(){
+            openChat(false);
+            kit.toast('Filled from your licence — check the highlighted fields.');
+          }, 900);
+        }, 950);
+      }));
+      scrollChat();
+    }
+
+    function lendersFromChat(kind){
+      if (!verified){
+        ai('Your shortlist unlocks once the SMS check is done — we’re not there yet.');
+        return;
+      }
+      if (kind === 'rates'){ pref = 'Best rate'; prefTouched = true; }
+      ai(kind === 'rates'
+        ? 'Here are the rates across your ' + LENDER_COUNT + ' lenders, ranked by best rate.'
+        : 'Here are the ' + LENDER_COUNT + ' lenders you qualify for right now.');
+      setTimeout(function(){
+        openLenders(true);
+        kit.toast(kind === 'rates' ? 'Rates are indicative until a lender is chosen.'
+                                   : 'Your shortlist widens as you fill more in.');
+      }, 560);
+    }
+
+    function startFastTrack(){
+      ai('To fast-track this I need three things from you:');
+      var ul = document.createElement('ul');
+      ul.className = 'dkbul';
+      FAST.forEach(function(f){
+        var li = document.createElement('li');
+        li.textContent = f.t;
+        ul.appendChild(li);
+      });
+      chatBox.appendChild(ul);
+      scrollChat();
+      setTimeout(function(){ askFast(0); }, 700);
+    }
+
+    function askFast(i){
+      if (i >= FAST.length){ preFillAll(); return; }
+      var f = FAST[i];
+      ai(f.ask);
+      chatBox.appendChild(uploadRow(f, function(){
+        if (f.k === 'licence') fillGroup('Licence');
+        if (f.k === 'payslip') fillGroup('Payslip');
+        setTimeout(function(){ askFast(i + 1); }, 560);
+      }));
+      scrollChat();
+    }
+
+    /* All three are in, so the whole application gets written at once — with a
+       beat of loading, because that's what it would really cost. */
+    function preFillAll(){
+      var load = el('div','dkload','<span class="ring"></span>' +
+        '<span class="lt"><b>Pre-filling whole application</b><span class="pl"><i></i></span></span>');
+      chatBox.appendChild(load);
+      scrollChat();
+      requestAnimationFrame(function(){ load.querySelector('.pl i').style.width = '100%'; });
+
+      setTimeout(function(){
+        load.remove();
+        var flagged = writeEverything();
+        ai('Done. Your details are now pre-filled, any additional fields needed are highlighted throughout the form.');
+        setTimeout(function(){
+          openChat(false);
+          kit.toast(flagged
+            ? flagged + ' field' + (flagged === 1 ? '' : 's') + ' still want a look — they’re highlighted.'
+            : 'Your application is pre-filled.');
+        }, 1500);
+      }, 2300);
+    }
+
+    function writeEverything(){
+      needs = {};
+      var flagged = 0;
+      kit.groups.forEach(function(g){
+        g.qs.forEach(function(q){
+          if (q.fill && !kit.values[q.key]) kit.values[q.key] = q.fill;
+          /* blank, or read off a document the scanner wasn't sure about */
+          if (!kit.values[q.key] || (q.conf && q.conf < 0.8)){
+            needs[q.key] = true;
+            flagged++;
+          }
+        });
+      });
+      paintForm();            // the screen behind the sheet picks it all up
+      return flagged;
+    }
+
+    /* one document, one button — used by the fast-track run and the licence prompt */
+    function uploadRow(f, after){
+      var row = el('div','dkup','<span class="ic">' + f.ic + '</span>' +
+        '<span class="tx"><b>' + f.t + '</b><span>' + f.d + '</span></span>');
+      var go = el('button','go', f.btn);
+      go.type = 'button';
+      go.addEventListener('click', function(){
+        row.classList.add('done');
+        row.querySelector('.tx span').textContent = f.file;
+        go.textContent = f.done;
+        after();
+      });
+      row.appendChild(go);
+      return row;
+    }
+
+    function fillGroup(src){
+      var n = 0;
+      refs.forEach(function(r){
+        if (r.q.src === src && !r.get()){ r.set(r.q.fill, true); n++; }
+      });
+      if (n) sync();
+      return n;
+    }
+
+    /* ---------- the prompt bubbles above the dock ---------- */
+    function showBubbles(){
+      if (chatOpen || lendersOpen || bubblesOff) return;
+      rail.innerHTML = '';
+      PROMPTS.forEach(function(p){
+        if (dropped[p.t]) return;
+        var b = el('button','dkbub', p.t);
+        b.type = 'button';
+        wireBubble(b, p);
+        rail.appendChild(b);
+      });
+      if (!rail.firstChild) return;
+      rail.scrollLeft = 0;
+      rail.classList.add('show');
+      dock.classList.add('pulse');
+      setTimeout(function(){ dock.classList.remove('pulse'); }, 3400);
+    }
+    function hideBubbles(){ if (rail) rail.classList.remove('show'); }
+
+    /* A drag sideways scrolls the rail; once it can't scroll any further that
+       way — or the drag is downward — the bubble itself goes with the finger. */
+    function wireBubble(b, p){
+      var sx = 0, sy = 0, axis = null, held = false, moved = false, from = 0, edge = false;
+
+      function reset(){
+        b.style.transition = '';
+        b.style.transform = '';
+        b.style.opacity = '';
+      }
+
+      b.addEventListener('pointerdown', function(e){
+        held = true; moved = false; axis = null; edge = false;
+        sx = e.clientX; sy = e.clientY;
+        from = rail.scrollLeft;
+        try { b.setPointerCapture(e.pointerId); } catch (err) {}
+        b.style.transition = 'none';
+      });
+
+      b.addEventListener('pointermove', function(e){
+        if (!held) return;
+        var dx = e.clientX - sx, dy = e.clientY - sy;
+        if (!axis){
+          if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+          axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+          var max = rail.scrollWidth - rail.clientWidth;
+          edge = (dx < 0 && from >= max - 1) || (dx > 0 && from <= 1);
+        }
+        moved = true;
+        if (axis === 'x' && !edge){
+          rail.scrollLeft = from - dx;
+          return;
+        }
+        var off = axis === 'y' ? Math.max(0, dy) : dx;
+        b.style.transform = axis === 'y'
+          ? 'translateY(' + Math.min(off, 34) + 'px)'
+          : 'translateX(' + off + 'px)';
+        b.style.opacity = String(Math.max(0, 1 - Math.min(Math.abs(off), 80) / 80));
+      });
+
+      b.addEventListener('pointerup', function(e){
+        if (!held) return;
+        held = false;
+        var dx = e.clientX - sx, dy = e.clientY - sy;
+        if ((axis === 'y' && dy > 38) || (axis === 'x' && edge && Math.abs(dx) > 52)){
+          drop(p, b, axis === 'y' ? 0 : (dx < 0 ? -160 : 160), axis === 'y' ? 60 : 0);
+          return;
+        }
+        reset();
+      });
+
+      b.addEventListener('pointercancel', function(){ held = false; moved = false; reset(); });
+      /* a tap is a click that never turned into a drag */
+      b.addEventListener('click', function(){
+        if (moved){ moved = false; return; }
+        run(p);
+      });
+    }
+
+    function drop(p, b, x, y){
+      dropped[p.t] = true;
+      b.style.transition = 'transform .22s ease-out,opacity .22s ease-out';
+      b.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      b.style.opacity = '0';
+      setTimeout(function(){
+        b.remove();
+        if (!rail.querySelector('.dkbub')) hideBubbles();
+      }, 230);
+    }
+
+    /* tapping a bubble is the same as tapping the prompt inside the chat */
+    function run(p){
+      openChat(true);
+      me(p.t);
+      setTimeout(p.go, 380);
+    }
+
+    /* ---------- screen 1 · what the loan is for ---------- */
+    function loanUse(){
+      backTo = home;
+      body.innerHTML = '';
+      body.scrollTop = 0;
+      showDock(false);
+      paintChip();
+      pct(5);
+      body.appendChild(el('h1','v4h1','What’s the loan for?'));
+      body.appendChild(el('p','v4sub','Select an option below'));
+
+      var opts = el('div','v4opts');
+      PURPOSES.forEach(function(name){
+        var b = el('button','v4opt' + (kit.values.purpose === name ? ' on' : ''), name);
+        b.type = 'button';
+        b.addEventListener('click', function(){
+          kit.values.purpose = name;
+          Array.prototype.forEach.call(opts.children, function(c){ c.classList.toggle('on', c === b); });
+          nextBtn.disabled = false;
+        });
+        opts.appendChild(b);
+      });
+      body.appendChild(opts);
+      setFoot('Continue', !!kit.values.purpose, loanPref, false);
+    }
+
+    /* ---------- screen 2 · what matters most ---------- */
+    function loanPref(){
+      backTo = loanUse;
+      body.innerHTML = '';
+      body.scrollTop = 0;
+      showDock(false);
+      pct(10);
+      body.appendChild(el('h1','v4h1','What are your loan preferences?'));
+      body.appendChild(el('p','v4sub','Select an option below'));
+
+      var opts = el('div','v4opts');
+      PREFS.forEach(function(name){
+        var b = el('button','v4opt' + (kit.values.prefs === name ? ' on' : ''), name);
+        b.type = 'button';
+        b.addEventListener('click', function(){
+          kit.values.prefs = name;
+          if (!prefTouched) pref = name;
+          Array.prototype.forEach.call(opts.children, function(c){ c.classList.toggle('on', c === b); });
+          nextBtn.disabled = false;
+        });
+        opts.appendChild(b);
+      });
+      body.appendChild(opts);
+      setFoot('Continue', !!kit.values.prefs, function(){
+        if (verified) startForm(); else identity();
+      }, true);
+    }
+
+    /* ---------- screen 3 · the SMS check ---------- */
+    function modal(build){
+      var scrim = el('div','v4scrim');
+      var box = el('div','v4modal');
+      scrim.appendChild(box);
+      screen.appendChild(scrim);
+      build(box, function close(){
+        scrim.classList.remove('show');
+        setTimeout(function(){ scrim.remove(); }, 300);
+      });
+      requestAnimationFrame(function(){ scrim.classList.add('show'); });
+      setTimeout(function(){ scrim.classList.add('show'); }, 30);
+      return scrim;
+    }
+
+    function identity(){
+      pct(12);
+      modal(function(box, close){
+        var ic = el('span','mic');
+        ic.innerHTML = LAB_SVG.padlock;
+        box.appendChild(ic);
+        box.appendChild(el('h3', null, 'Just one thing before we unlock your lenders…'));
+        box.appendChild(el('p', null, 'We just need to verify that it’s you.'));
+
+        var ins = [];
+        [['Name','name','Dave Wallace'], ['Mobile','mobile','0412 884 019'], ['Email','email','dave.wallace@mail.com']]
+          .forEach(function(f){
+            var i = document.createElement('input');
+            i.className = 'v4in';
+            i.type = 'text';
+            i.placeholder = f[0];
+            i.value = kit.values[f[1]] || '';
+            i.dataset.key = f[1];
+            i.dataset.demo = f[2];
+            i.addEventListener('input', sync2);
+            box.appendChild(i);
+            ins.push(i);
+          });
+
+        var chk = el('button','v4chk','<span class="bx">' + LAB_SVG.tickTiny + '</span>' +
+          '<span>I agree to the terms &amp; conditions</span>');
+        chk.type = 'button';
+        var agreed = false;
+        chk.addEventListener('click', function(){
+          agreed = !agreed;
+          chk.classList.toggle('on', agreed);
+          sync2();
+        });
+        box.appendChild(chk);
+
+        var send = el('button','v4cta','Send me the code');
+        send.type = 'button';
+        send.disabled = true;
+        box.appendChild(send);
+
+        var fill = el('button','v4link','Fill it in for me');
+        fill.type = 'button';
+        fill.addEventListener('click', function(){
+          ins.forEach(function(i){ i.value = i.dataset.demo; });
+          agreed = true;
+          chk.classList.add('on');
+          sync2();
+        });
+        box.appendChild(fill);
+
+        function sync2(){
+          var full = ins.every(function(i){ return i.value.trim(); });
+          send.disabled = !(full && agreed);
+        }
+        send.addEventListener('click', function(){
+          ins.forEach(function(i){ kit.values[i.dataset.key] = i.value.trim(); });
+          close();
+          setTimeout(otp, 260);
+        });
+      });
+    }
+
+    function otp(){
+      pct(14);
+      modal(function(box, close){
+        var ic = el('span','mic');
+        ic.innerHTML = LAB_SVG.phone;
+        box.appendChild(ic);
+        box.appendChild(el('h3', null, 'We’ve sent the secret code to your phone'));
+        box.appendChild(el('p', null, 'Enter the super secret code below'));
+
+        var wrap = el('div','v4code');
+        var boxes = [];
+        for (var n = 0; n < 4; n++){
+          var i = document.createElement('input');
+          i.type = 'text';
+          i.maxLength = 1;
+          i.inputMode = 'numeric';
+          wrap.appendChild(i);
+          boxes.push(i);
+        }
+        box.appendChild(wrap);
+        boxes.forEach(function(i, n){
+          i.addEventListener('input', function(){
+            if (i.value && boxes[n + 1]) boxes[n + 1].focus();
+            check();
+          });
+        });
+
+        var count = el('p','v4count','30 seconds remaining');
+        box.appendChild(count);
+        var left = 30;
+        var t = setInterval(function(){
+          left--;
+          count.textContent = left + ' seconds remaining';
+          if (left <= 0) clearInterval(t);
+        }, 1000);
+
+        var resend = el('button','v4link','Resend the code');
+        resend.type = 'button';
+        resend.addEventListener('click', function(){
+          boxes.forEach(function(b){ b.value = ''; });
+          left = 30;
+          kit.toast('A new code would be sent here.');
+        });
+        box.appendChild(resend);
+
+        var auto = el('button','v4link','Use the demo code 4 2 9 1');
+        auto.type = 'button';
+        auto.addEventListener('click', function(){
+          '4291'.split('').forEach(function(d, n){ boxes[n].value = d; });
+          check();
+        });
+        box.appendChild(auto);
+
+        function check(){
+          if (!boxes.every(function(b){ return b.value; })) return;
+          clearInterval(t);
+          wrap.style.opacity = '.5';
+          setTimeout(function(){
+            verified = true;
+            close();
+            paintChip();
+            kit.toast(LENDER_COUNT + ' lenders unlocked — the chip up top now opens.');
+            setTimeout(startForm, 260);
+          }, 500);
+        }
+      });
+    }
+
+    /* ---------- screen 4 onwards · the form, with the dock ---------- */
+    function startForm(){
+      at = 0;
+      paintForm();
+    }
+
+    function paintForm(){
+      var g = kit.groups[at];
+      backTo = at === 0 ? loanPref : function(){ at--; paintForm(); };
+      body.innerHTML = '';
+      body.scrollTop = 0;
+      refs = [];
+      clearTimeout(bubbleT);
+      hideBubbles();
+      showDock(true);
+
+      var wrap = el('div','lab-grp');
+      wrap.appendChild(el('h3', null, g.title));
+      if (g.sub) wrap.appendChild(el('p','gsub', g.sub));
+      if (g.blocks){
+        g.blocks.forEach(function(b){
+          wrap.appendChild(el('h4','ghead', b.head));
+          b.qs.forEach(function(q){ wrap.appendChild(addField(q)); });
+        });
+      } else {
+        g.qs.forEach(function(q){ wrap.appendChild(addField(q)); });
+      }
+      wrap.appendChild(el('div','lab-note','<b>Broker assist never writes behind your back.</b> ' +
+        'Anything it fills lands in these fields, highlighted, and you can type over it.'));
+      body.appendChild(wrap);
+
+      setFoot(at === kit.groups.length - 1 ? 'Finish this part' : 'Continue', false, function(){
+        if (at < kit.groups.length - 1){ at++; paintForm(); } else done();
+      }, true);
+      sync();
+
+      /* the bubbles ride along until the drawer is opened or they're swiped away */
+      if (!bubblesOff) bubbleT = setTimeout(showBubbles, 900);
+    }
+
+    function addField(q){
+      var ref = kit.field(q, { onChange:sync });
+      if (kit.values[q.key]) ref.set(kit.values[q.key]);
+      refs.push(ref);
+      if (needs[q.key]) markNeeds(ref);
+      return ref.node;
+    }
+
+    /* After a pre-fill, anything still blank — or read off a document with low
+       confidence — carries a flag until you've put eyes on it. */
+    function markNeeds(ref){
+      var tag = el('span','nq', LAB_SVG.alert +
+        '<span>' + (ref.get() ? 'Worth a check' : 'Still needed') + '</span>');
+      ref.ctrl.classList.add('needs');
+      ref.after(tag);
+      function clear(){
+        delete needs[ref.q.key];
+        ref.ctrl.classList.remove('needs');
+        tag.remove();
+      }
+      if (ref.input) ref.input.addEventListener('input', clear, { once:true });
+      else ref.ctrl.addEventListener('click', clear, { once:true });
+    }
+
+    function sync(){
+      refs.forEach(function(r){ if (r.get()) kit.values[r.q.key] = r.get(); });
+      var got = refs.filter(function(r){ return r.get(); }).length;
+      nextBtn.disabled = got === 0;
+      pct(14 + (at + got / Math.max(1, refs.length)) / kit.groups.length * 86);
+    }
+
+    function done(){
+      body.innerHTML = '';
+      body.scrollTop = 0;
+      pct(100);
+      hideBubbles();
+      showDock(false);
+      openLenders(false);
+      openChat(false);
+      body.appendChild(kit.endPanel('Every screen could have been finished without opening Broker assist — ' +
+        'which is the point. It only earns its place when it takes typing away.'));
+      foot.style.display = 'none';
+      backTo = function(){ at = kit.groups.length - 1; paintForm(); };
+    }
+
+    kit.restartBtn.addEventListener('click', boot);
+    window.addEventListener('resize', sizeSheet);
+    boot();
+    kit.fit();
+    return { resize:function(){ kit.fit(); sizeSheet(); } };
+  };
 
   /* ---------- version tabs ---------- */
   var tpl = document.getElementById('deviceTpl');
