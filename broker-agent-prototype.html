@@ -2659,7 +2659,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     </aside>
 
     <aside class="notes" data-notes="5" hidden>
-      <h2 class="n-title">V5 · Section assist</h2>
+      <h2 class="n-title">Section-specific support &amp; automation</h2>
 
       <div class="meter">
         <div class="mtop"><span class="mlab">AI-automation prominence</span><span class="mval">≈ 20% AI · 80% manual</span></div>
@@ -2669,27 +2669,15 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 
       <section>
         <h3>Overview</h3>
-        <p>The widget opens a single guided journey: reason for the loan, loan preference, an SMS check, then the application itself, one section at a time. Assist is no longer attached to each question — there is one assistant per section, and it leads with document upload. The lender bar carries over from version 2: locked until the mobile is verified, then a dropdown of the shortlist that narrows once identity is checked.</p>
-      </section>
-
-      <section>
-        <h3>The assist surface</h3>
-        <p>One assistant per section, not one per question. A dock sits between the form and the Continue button. It never covers a field, it stays on screen while the section is filled in, and it says what it can do right now — “Fill this section from a photo”. It flashes lightly in every new section until it has been opened. Tapping it raises a sheet over the lower half of the screen; the form stays visible behind it.</p>
-      </section>
-
-      <section>
-        <h3>After the document is read</h3>
-        <p>A document rarely covers a whole section, so whatever it missed turns red and marked <em>Still needed</em>, and the screen scrolls to the first one. The dock stops selling the upload and becomes <em>Broker Assist — get help with this section</em>, so the next move is always obvious.</p>
+        <p>The manual form stays as is but there is an added Assist feature built in that comes with structured prompts. This aims to provide more linear support for the user PER section — that way the context of the chat isn’t overloaded.</p>
       </section>
 
       <section class="pros">
         <h3>Pros</h3>
         <ul>
-          <li>Upload is the headline action, so the assistant reads as a shortcut rather than a chatbot.</li>
+          <li>Low adoption risk if users don’t open the chat.</li>
+          <li>Upload is the headline action, so Assist reads as a shortcut rather than a chatbot.</li>
           <li>Persistent but passive — always in view, never in the way of the fields.</li>
-          <li>The dock’s copy changes as the section fills, so it keeps earning attention.</li>
-          <li>The customer is never left guessing what is still outstanding after a document is read.</li>
-          <li>Answers return as small labelled cards, not a message log, so nothing feels like a support queue.</li>
         </ul>
       </section>
 
@@ -2697,7 +2685,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
         <h3>Cons</h3>
         <ul>
           <li>Costs ~60px of vertical space on every section screen.</li>
-          <li>A bottom sheet on a tall section means the customer loses sight of the fields being filled.</li>
+          <li>Chat UI needs some work to reduce cognitive load.</li>
         </ul>
       </section>
 
@@ -2705,7 +2693,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     </aside>
 
     <aside class="notes" data-notes="dock" hidden>
-      <h2 class="n-title">V6 · Manual form, Broker assist dock</h2>
+      <h2 class="n-title">Fixed Assist chat with auto-prompts</h2>
 
       <div class="meter">
         <div class="mtop"><span class="mlab">AI-automation prominence</span><span class="mval">≈ 30% AI · 70% manual</span></div>
@@ -2715,34 +2703,23 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 
       <section>
         <h3>Overview</h3>
-        <p>Starts on the same loanoptions.ai widget as versions 1 and 2, with the personal loan the only live tile. Loan use, then preferences, then the SMS check — which turns the locked <b>Unlock lenders soon</b> chip into the working <b>23 lenders</b> dropdown from Version 2. From there it’s an ordinary form with the assist dock parked directly above the Continue button.</p>
-      </section>
-
-      <section>
-        <h3>How it works</h3>
-        <ul>
-          <li>The dock carries an unread badge counting the four prompts, with the same four as bubbles on a rail above it — drag sideways for the rest, flick one down or off the end to be rid of it.</li>
-          <li>Opening it gives four standing prompts: fill from licence, view lender options, view loan rates, fast-track.</li>
-          <li>Either lender prompt opens the 23-lender bar; fast-track walks the three documents one at a time, each with its own upload button.</li>
-          <li>Anything the assistant fills is written into the visible form, never into a hidden state.</li>
-        </ul>
+        <p>The Assist chat and history stays present through all screens. Allows for more flexible prompting. Auto-prompts are provided as a guide for the user per section.</p>
       </section>
 
       <section class="pros">
         <h3>Pros</h3>
         <ul>
-          <li>Lowest adoption risk of the assisted options — nothing changes if you never open it.</li>
-          <li>Easy to A/B: the same form with the dock on or off.</li>
-          <li>Chat is still available in full for customers who want it.</li>
+          <li>Low adoption risk if users don’t open the chat.</li>
+          <li>Persistent but passive — always in view, never in the way of the fields.</li>
         </ul>
       </section>
 
       <section class="cons">
         <h3>Cons</h3>
         <ul>
-          <li>Most customers will never open it, so the AI value has to come from the bubbles.</li>
-          <li>Badly timed bubbles read as interruption; this needs real tuning.</li>
-          <li>Two surfaces to maintain for one flow.</li>
+          <li>Most customers may never open it, so the AI value has to come from the bubbles.</li>
+          <li>Badly timed bubbles read as interruption; this may need tuning.</li>
+          <li>Chat will need to have guardrails to stop context from getting overloaded.</li>
         </ul>
       </section>
 
@@ -2798,6 +2775,381 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     { key:'home', label:'Home', d:'M15 21V13C15 12.7348 14.8946 12.4804 14.7071 12.2929C14.5196 12.1053 14.2652 12 14 12H10C9.73478 12 9.48043 12.1053 9.29289 12.2929C9.10536 12.4804 9 12.7348 9 13V21M3 9.99997C2.99993 9.70904 3.06333 9.42159 3.18579 9.15768C3.30824 8.89378 3.4868 8.65976 3.709 8.47197L10.709 2.47297C11.07 2.16788 11.5274 2.00049 12 2.00049C12.4726 2.00049 12.93 2.16788 13.291 2.47297L20.291 8.47197C20.5132 8.65976 20.6918 8.89378 20.8142 9.15768C20.9367 9.42159 21.0001 9.70904 21 9.99997V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V9.99997Z' }
   ];
 
+
+  /* ---------- the widget wizard, shared by every version ----------
+     Version 4 grew this: the tiles are the first step of a rail, and the
+     widget asks how much and how long before the application opens. Every
+     version now runs it. `reason` adds V4's closing "what's the loan for"
+     step; the versions that ask elsewhere leave it off and finish on term. */
+  var WZ_REASONS = ['Medical / Cosmetics','Home Renovations','Solar or Green Energy','Debt Consolidation',
+    'Appliances / White Goods','Travel','Wedding','Car Loan','Education','Boat','Other'];
+
+  var WZ_CV = '<svg width="11" height="7" viewBox="0 0 11.5 6.81065" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0.75 0.75L5.75001 5.74999L10.75 0.75" stroke="#5614BB" stroke-width="1.5" stroke-linecap="round"/></svg>';
+
+  function wzMoney(n){ return '$' + Number(n).toLocaleString('en-AU'); }
+  function wzTerm(t){ return t === 0 ? 'No preference' : t + (t === 1 ? ' year' : ' years'); }
+
+  /* o: { card, screen, tiles, icon, toast, reason, onStart, resume } — the
+     version brings its own tiles and icon renderer, and is handed the answers
+     back. `resume` lets a started journey skip the questions entirely. */
+  function installWidget(o){
+    var card = o.card;
+    var W = { amount:25000, term:5, reason:null, reasonDetail:'' };
+
+    var h2  = card.querySelector('h2');
+    var tag = card.querySelector('.home-tag');
+    var slot = card.querySelector('.home-grid');   // the tiles move into step one
+
+    var vp = el('div','wz-vp'), rail = el('div','wz-rail');
+    vp.appendChild(rail);
+    card.insertBefore(vp, slot);
+
+    var withReason = !!o.reason;
+    var TITLES = ['Start comparing in 5 mins','How much do you need?','Over how long?'];
+    if (withReason) TITLES.push('What’s the loan for?');
+
+    var dots = el('div','wz-steps');
+    TITLES.forEach(function(){ dots.appendChild(document.createElement('i')); });
+    card.insertBefore(dots, slot);
+    card.removeChild(slot);
+
+    var steps = [];
+
+    function paintRange(r){
+      var pct = (r.value - r.min) / (r.max - r.min) * 100;
+      r.style.background = 'linear-gradient(90deg,var(--brand) ' + pct + '%,var(--muted-fill) ' + pct + '%)';
+    }
+    function nav(onBack, label){
+      var row = el('div','wz-nav');
+      var b = el('button','wz-back','Back');
+      b.type = 'button';
+      b.addEventListener('click', onBack);
+      var n = el('button','wz-next', label);
+      n.type = 'button';
+      row.appendChild(b); row.appendChild(n);
+      row.next = n;
+      return row;
+    }
+    function finish(){ o.onStart(W); }
+
+    /* step 0 — the service tiles, personal only */
+    var s0 = el('div','wz-step');
+    var grid = el('div','home-grid');
+    o.tiles.forEach(function(t){
+      var b = el('button','home-tile' + (t.live ? '' : ' soon'));
+      b.type = 'button';
+      b.innerHTML = o.icon(t) + '<span>' + t.label + '</span>';
+      b.addEventListener('click', function(){
+        if (!t.live){ o.toast('Only the personal loan journey is prototyped here.'); return; }
+        /* the versions that park on the homescreen come straight back in
+           rather than answering the widget a second time */
+        if (o.resume && o.resume()) return;
+        go(1);
+      });
+      grid.appendChild(b);
+    });
+    s0.appendChild(grid);
+    steps.push(s0);
+
+    /* step 1 — how much */
+    var s1 = el('div','wz-step');
+    var v1 = el('div','wz-val', wzMoney(W.amount));
+    s1.appendChild(v1);
+    s1.appendChild(el('p','wz-cap','A rough figure is fine — it can move before anything is submitted.'));
+    var r1 = document.createElement('input');
+    r1.type = 'range'; r1.className = 'rng';
+    r1.min = '0'; r1.max = '250000'; r1.step = '1000'; r1.value = String(W.amount);
+    s1.appendChild(r1);
+    s1.appendChild(el('div','wz-ends','<span>$0</span><span>$250,000</span>'));
+    var n1 = nav(function(){ go(0); }, 'Continue');
+    s1.appendChild(n1);
+    r1.addEventListener('input', function(){
+      W.amount = Number(r1.value);
+      v1.textContent = wzMoney(W.amount);
+      paintRange(r1);
+      n1.next.disabled = W.amount < 1000;
+    });
+    n1.next.addEventListener('click', function(){ go(2); });
+    paintRange(r1);
+    steps.push(s1);
+
+    /* step 2 — how long. The last step unless the version wants the reason. */
+    var s2 = el('div','wz-step');
+    var v2 = el('div','wz-val', wzTerm(W.term));
+    s2.appendChild(v2);
+    s2.appendChild(el('p','wz-cap','Longer terms lower the repayment and raise the total interest.'));
+    var r2 = document.createElement('input');
+    r2.type = 'range'; r2.className = 'rng';
+    r2.min = '0'; r2.max = '7'; r2.step = '1'; r2.value = String(W.term);
+    s2.appendChild(r2);
+    s2.appendChild(el('div','wz-ends','<span>No preference</span><span>7 years</span>'));
+    var n2 = nav(function(){ go(1); }, withReason ? 'Continue' : 'Start my application');
+    s2.appendChild(n2);
+    r2.addEventListener('input', function(){
+      W.term = Number(r2.value);
+      v2.textContent = wzTerm(W.term);
+      paintRange(r2);
+    });
+    n2.next.addEventListener('click', function(){ if (withReason) go(3); else finish(); });
+    paintRange(r2);
+    steps.push(s2);
+
+    /* step 3 — what for. The list itself lives in a sheet, so the widget
+       stays the same height until it is opened. */
+    if (withReason){
+      var s3 = el('div','wz-step');
+      var trigger = el('button','wz-drop','<b>Select a reason</b><span class="cv">' + WZ_CV + '</span>');
+      trigger.type = 'button';
+      s3.appendChild(trigger);
+
+      /* “Other” needs a line of its own, so the broker knows what it is */
+      var other = el('div','wz-other');
+      other.hidden = true;
+      var otherIn = document.createElement('input');
+      otherIn.type = 'text';
+      otherIn.className = 'v4in';
+      otherIn.placeholder = 'Specify';
+      other.appendChild(otherIn);
+      s3.appendChild(other);
+
+      var n3 = nav(function(){ go(2); }, 'Start my application');
+      n3.next.disabled = true;
+      s3.appendChild(n3);
+
+      otherIn.addEventListener('input', function(){
+        W.reasonDetail = otherIn.value.trim();
+        n3.next.disabled = !W.reasonDetail;
+      });
+      trigger.addEventListener('click', function(){
+        trigger.classList.add('open');
+        openReasons(trigger, n3.next, function(name){
+          var isOther = name === 'Other';
+          other.hidden = !isOther;
+          if (!isOther){ otherIn.value = ''; W.reasonDetail = ''; }
+          n3.next.disabled = isOther && !otherIn.value.trim();
+          size();
+          if (isOther) setTimeout(function(){ otherIn.focus(); }, 360);
+        });
+      });
+      n3.next.addEventListener('click', finish);
+      steps.push(s3);
+    }
+
+    function openReasons(trigger, nextBtn, onPick){
+      var scrim = el('div','pickr-scrim');
+      var sheet = el('div','pickr');
+      sheet.appendChild(el('div','pickr-grab'));
+      sheet.appendChild(el('h4','pickr-t','What’s the loan for?'));
+      var list = el('div','pickr-list');
+      WZ_REASONS.forEach(function(name){
+        var b = el('button','wz-opt' + (W.reason === name ? ' on' : ''), name);
+        b.type = 'button';
+        b.addEventListener('click', function(){
+          W.reason = name;
+          trigger.querySelector('b').textContent = name;
+          trigger.classList.add('set');
+          nextBtn.disabled = false;
+          close();
+          if (onPick) onPick(name);
+        });
+        list.appendChild(b);
+      });
+      sheet.appendChild(list);
+      scrim.appendChild(sheet);
+      o.screen.appendChild(scrim);
+      requestAnimationFrame(function(){ scrim.classList.add('show'); });
+      setTimeout(function(){ scrim.classList.add('show'); }, 20);
+
+      function close(){
+        trigger.classList.remove('open');
+        scrim.classList.remove('show');
+        setTimeout(function(){ scrim.remove(); }, 320);
+      }
+      scrim.addEventListener('click', function(e){ if (e.target === scrim) close(); });
+    }
+
+    steps.forEach(function(s){ rail.appendChild(s); });
+
+    var at = 0;
+    function size(){
+      var h = steps[at].offsetHeight;
+      if (h) vp.style.height = h + 'px';
+      requestAnimationFrame(function(){
+        var h2 = steps[at].offsetHeight;
+        if (h2) vp.style.height = h2 + 'px';
+      });
+    }
+    function go(i){
+      at = i;
+      rail.style.transform = 'translateX(' + (-100 * i) + '%)';
+      steps.forEach(function(s, n){
+        if (n === i) s.removeAttribute('inert'); else s.setAttribute('inert','');
+      });
+      if (h2) h2.textContent = TITLES[i];
+      if (tag) tag.style.display = i === 0 ? '' : 'none';
+      Array.prototype.forEach.call(dots.children, function(d, n){ d.classList.toggle('on', n <= i); });
+      size();
+    }
+    go(0);
+    setTimeout(size, 60);
+
+    return { W:W, go:go, size:size, reset:function(){ go(0); } };
+  }
+
+
+  /* ---------- the verification pair, shared by every version ----------
+     Version 4's two modals — who you are, then the code. The caller says
+     where to mount them, what it already knows, and what happens when the
+     code lands; the design is the same wherever it runs.
+     o: { screen, values, toast, onStep, onClose, onDone } */
+  function smsVerify(o){
+    var values = o.values || {};
+
+    function modal(build){
+      var scrim = el('div','v4scrim');
+      var box = el('div','v4modal');
+      scrim.appendChild(box);
+      o.screen.appendChild(scrim);
+      build(box, function close(){
+        if (o.onClose) o.onClose();
+        scrim.classList.remove('show');
+        setTimeout(function(){ scrim.remove(); }, 300);
+      });
+      requestAnimationFrame(function(){ scrim.classList.add('show'); });
+      setTimeout(function(){ scrim.classList.add('show'); }, 30);
+      return scrim;
+    }
+
+    function identity(){
+      if (o.onStep) o.onStep('identity');
+      modal(function(box, close){
+        var ic = el('span','mic');
+        ic.innerHTML = LAB_SVG.padlock;
+        box.appendChild(ic);
+        box.appendChild(el('h3', null, 'Just one thing before we unlock your lenders…'));
+        box.appendChild(el('p', null, 'We just need to verify that it’s you.'));
+
+        var ins = [];
+        [['Name','name','Dave Wallace'], ['Mobile','mobile','0412 884 019'], ['Email','email','dave.wallace@mail.com']]
+          .forEach(function(f){
+            var i = document.createElement('input');
+            i.className = 'v4in';
+            i.type = 'text';
+            i.placeholder = f[0];
+            i.value = values[f[1]] || '';
+            i.addEventListener('input', sync);
+            i.dataset.key = f[1];
+            i.dataset.demo = f[2];
+            box.appendChild(i);
+            ins.push(i);
+          });
+
+        var chk = el('button','v4chk','<span class="bx">' + LAB_SVG.tickTiny + '</span>' +
+          '<span>I agree to the terms &amp; conditions</span>');
+        chk.type = 'button';
+        var agreed = false;
+        chk.addEventListener('click', function(){
+          agreed = !agreed;
+          chk.classList.toggle('on', agreed);
+          sync();
+        });
+        box.appendChild(chk);
+
+        var send = el('button','v4cta','Send me the code');
+        send.type = 'button';
+        send.disabled = true;
+        box.appendChild(send);
+
+        var fill = el('button','v4link','Fill it in for me');
+        fill.type = 'button';
+        fill.addEventListener('click', function(){
+          ins.forEach(function(i){ i.value = i.dataset.demo; });
+          agreed = true;
+          chk.classList.add('on');
+          sync();
+        });
+        box.appendChild(fill);
+
+        function sync(){
+          var full = ins.every(function(i){ return i.value.trim(); });
+          send.disabled = !(full && agreed);
+        }
+        send.addEventListener('click', function(){
+          ins.forEach(function(i){ values[i.dataset.key] = i.value.trim(); });
+          close();
+          setTimeout(otp, 260);
+        });
+      });
+    }
+
+    function otp(){
+      if (o.onStep) o.onStep('code');
+      modal(function(box, close){
+        var ic = el('span','mic');
+        ic.innerHTML = LAB_SVG.phone;
+        box.appendChild(ic);
+        box.appendChild(el('h3', null, 'We’ve sent the secret code to your phone'));
+        box.appendChild(el('p', null, 'Enter the super secret code below'));
+
+        var wrap = el('div','v4code');
+        var boxes = [];
+        for (var n = 0; n < 4; n++){
+          var i = document.createElement('input');
+          i.type = 'text';
+          i.maxLength = 1;
+          i.inputMode = 'numeric';
+          wrap.appendChild(i);
+          boxes.push(i);
+        }
+        box.appendChild(wrap);
+        boxes.forEach(function(i, n){
+          i.addEventListener('input', function(){
+            if (i.value && boxes[n + 1]) boxes[n + 1].focus();
+            check();
+          });
+        });
+
+        var count = el('p','v4count','30 seconds remaining');
+        box.appendChild(count);
+        var left = 30;
+        var t = setInterval(function(){
+          left--;
+          count.textContent = left + ' seconds remaining';
+          if (left <= 0) clearInterval(t);
+        }, 1000);
+
+        var resend = el('button','v4link','Resend the code');
+        resend.type = 'button';
+        resend.addEventListener('click', function(){
+          boxes.forEach(function(b){ b.value = ''; });
+          left = 30;
+          if (o.toast) o.toast('A new code would be sent here.');
+        });
+        box.appendChild(resend);
+
+        var auto = el('button','v4link','Use the demo code 4 2 9 1');
+        auto.type = 'button';
+        auto.addEventListener('click', function(){
+          '4291'.split('').forEach(function(d, n){ boxes[n].value = d; });
+          check();
+        });
+        box.appendChild(auto);
+
+        function check(){
+          if (!boxes.every(function(b){ return b.value; })) return;
+          clearInterval(t);
+          wrap.style.opacity = '.5';
+          setTimeout(function(){
+            close();
+            setTimeout(function(){ o.onDone(values); }, 240);
+          }, 500);
+        }
+      });
+    }
+
+    identity();
+  }
+
   /* Everything below runs once per version tab, scoped to that panel, so each
      version keeps its own conversation, answers and progress. */
   function mountPrototype(root, version){
@@ -2849,24 +3201,13 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     {
       sec:'loan', pad:'chips', after:'lenders',
       cards:[
-        { kind:'chips', mode:'single', nav:true, badge:true, key:'vehicle',
-          title:'Tell us about the vehicle you want',
-          sub:'Select an option below',
-          options:['I know what car I want','I’m still looking...','I already own the car','Pre-approval'] },
-        { kind:'chips', mode:'multi', key:'prefs',
+        { kind:'chips', mode:'multi', nav:true, badge:true, key:'prefs',
           title:'What are your loan preferences?',
           sub:'You can select more than one. This can also be changed later',
           options:['Low repayment','Best rate','Fast approval','Low doc requirement'] }
       ],
       reply:function(a){
-        var lines = {
-          'I know what car I want':'Perfect — knowing the car lets me pin down the amount and term straight away.',
-          'I’m still looking...':'No problem. I’ll work from a range for now and tighten it once you’ve picked a car.',
-          'I already own the car':'Got it — that puts you in refinance territory, which usually means fewer documents.',
-          'Pre-approval':'Good call. Pre-approval gives you a firm budget before you start negotiating.'
-        };
-        var out = [], p = a[1] || [];
-        if (a[0] && lines[a[0][0]]) out.push(lines[a[0][0]]);
+        var out = [], p = a[0] || [];
         if (p.length){
           out.push('I’ll rank lenders on ' + p[0].toLowerCase() + ' first' +
             (p.length > 1 ? ', then ' + p.slice(1).map(function(s){ return s.toLowerCase(); }).join(' and ') : '') +
@@ -2961,6 +3302,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   var awaitingMenu = false;
   var spotTimer = null, firstRow = null;      /* the "start here" spotlight in the menu */
   var journeyStarted = false;                 /* survives a trip back to the homescreen */
+  var verifiedMobile = false;                 /* the SMS check runs once, on the way in */
 
   /* The opener types on in two beats, then the menu spotlight lifts. */
   var INTRO = [
@@ -3910,7 +4252,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 
   /* Every preference is selectable; the one you ranked first is just the default. */
   function defaultPref(){
-    var picks = decks[0] && decks[0].answers && decks[0].answers[1];
+    var picks = decks[0] && decks[0].answers && decks[0].answers[0];
     return (picks && picks.length) ? picks[0] : ALL_PREFS[0];
   }
 
@@ -4024,6 +4366,8 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     thread.innerHTML = ''; quicks.innerHTML = '';
     values = {}; busy = false; decks = []; seen = { lenders:false, done:false };
     coached = { menu:false, pill:false, start:false }; awaitingMenu = false; journeyStarted = false;
+    verifiedMobile = false;
+    if (widget) widget.reset();
     clearTimeout(spotTimer);
     $('spot').classList.remove('show');
     $('coach').classList.remove('show');
@@ -4051,27 +4395,48 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
   }
 
   /* ---------- homescreen ---------- */
+  /* The widget runs version 4's wizard in full — including what the loan is
+     for, which is why the journey itself no longer opens with that question. */
+  var widget = null;
   function paintHome(){
-    var grid = $('homeGrid');
-    grid.innerHTML = '';
-    SERVICES.forEach(function(s){
-      var b = el('button', 'home-tile' + (s.live ? '' : ' soon'));
-      b.type = 'button';
-      b.innerHTML = svcIcon(s.key, s.d, version) + '<span>' + s.label + '</span>';
-      b.addEventListener('click', function(){
-        if (!s.live){ toast('The ' + s.label.toLowerCase() + ' loan journey isn’t prototyped yet.'); return; }
-        startJourney(s.label);
-      });
-      grid.appendChild(b);
+    widget = installWidget({
+      card:$('home').querySelector('.home-card'), screen:screenEl,
+      tiles:SERVICES.map(function(x){
+        return { key:x.key, label:x.label, d:x.d, live:x.key === 'personal' };
+      }),
+      icon:function(t){ return svcIcon(t.key, t.d, version); },
+      toast:toast, reason:true,
+      resume:function(){
+        if (!journeyStarted) return false;
+        $('home').classList.add('gone');
+        scrollDown(false);
+        return true;
+      },
+      onStart:function(w){
+        values.amount = w.amount;
+        values.term = w.term;
+        values.purpose = w.reasonDetail || w.reason;
+        startJourney('Personal');
+      }
     });
   }
 
+  /* The widget is done, so the application opens on the SMS check before a
+     single question is asked — the same pair version 4 uses. */
   function startJourney(product){
     values.product = product;
     $('home').classList.add('gone');
     if (journeyStarted) { scrollDown(false); return; }   // resume where they left off
     journeyStarted = true;
-    playIntro();
+    if (verifiedMobile){ playIntro(); return; }
+    smsVerify({
+      screen:screenEl, values:values, toast:toast,
+      onDone:function(){
+        verifiedMobile = true;
+        playIntro();
+        toast('Mobile verified — your number is already filled in.');
+      }
+    });
   }
 
   /* The back arrow parks the application on the homescreen; nothing is cleared. */
@@ -4141,10 +4506,8 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 
   /* ---------- Version 2: manual form journey ---------- */
   var MANUAL = [
-    { pct:5, key:'vehicle', title:'Have you found the car you’re looking for?', sub:'Select an option below',
-      kind:'options', mode:'single', options:DECKS[0].cards[0].options },
     { pct:6, key:'prefs', title:'What are your loan preferences?', sub:'Select all that apply',
-      kind:'options', mode:'multi', options:DECKS[0].cards[1].options },
+      kind:'options', mode:'multi', options:DECKS[0].cards[0].options },
     { pct:10, title:'Great! Tell me more about yourself',
       sub:'Fill in your details or get it done automatically',
       kind:'form', auto:'Upload your driver’s license to auto-fill',
@@ -5109,14 +5472,11 @@ var LAB_TILES = [
     var kit = labKit(panel, 'draft', { tag:'', blurb:'' });
     var screen = kit.screen;
 
-    /* the reasons list from the design */
-    var REASONS = ['Medical / Cosmetics','Home Renovations','Solar or Green Energy','Debt Consolidation',
-      'Appliances / White Goods','Travel','Wedding','Car Loan','Education','Boat','Other'];
 
     var W, DOCS, verified = false, docAt = 0;
 
-    function money(n){ return '$' + Number(n).toLocaleString('en-AU'); }
-    function termLabel(){ return W.term === 0 ? 'No preference' : W.term + (W.term === 1 ? ' year' : ' years'); }
+    function money(n){ return wzMoney(n); }
+    function termLabel(){ return wzTerm(W.term); }
     function reasonLabel(){
       return (W.reason === 'Other' && W.reasonDetail) ? W.reasonDetail + ' (other)' : W.reason;
     }
@@ -5190,19 +5550,13 @@ var LAB_TILES = [
 
       var card = el('div','home-card');
       var top = el('div','home-card-top');
-      var h2 = el('h2', null, 'Start comparing in 5 mins');
-      var tag = el('span','home-tag','<span class="ic15">' + LAB_SVG.agent +
-        '</span><span>Apply with the help of our digital assistant!</span>');
-      top.appendChild(h2); top.appendChild(tag);
+      top.appendChild(el('h2', null, 'Start comparing in 5 mins'));
+      top.appendChild(el('span','home-tag','<span class="ic15">' + LAB_SVG.agent +
+        '</span><span>Apply with the help of our digital assistant!</span>'));
       card.appendChild(top);
 
-      var vp = el('div','wz-vp');
-      var rail = el('div','wz-rail');
-      vp.appendChild(rail);
-      card.appendChild(vp);
-
-      var dots = el('div','wz-steps','<i></i><i></i><i></i><i></i>');
-      card.appendChild(dots);
+      /* installWidget turns this into the first step of the rail */
+      card.appendChild(el('div','home-grid'));
 
       var cfoot = el('div','home-foot');
       cfoot.innerHTML = '<p class="home-disc"><span>No data shared. No bias deals. <b>No dramas.</b></span></p>' +
@@ -5241,183 +5595,12 @@ var LAB_TILES = [
       screen.appendChild(h);
       screen.appendChild(kit.toastEl);
 
-      var TITLES = ['Start comparing in 5 mins','How much do you need?',
-                    'Over how long?','What’s the loan for?'];
-      var steps = [];
-
-      function paintRange(r){
-        var pct = (r.value - r.min) / (r.max - r.min) * 100;
-        r.style.background = 'linear-gradient(90deg,var(--brand) ' + pct + '%,var(--muted-fill) ' + pct + '%)';
-      }
-      function nav(onBack, label){
-        var row = el('div','wz-nav');
-        var b = el('button','wz-back','Back');
-        b.type = 'button';
-        b.addEventListener('click', onBack);
-        var n = el('button','wz-next', label);
-        n.type = 'button';
-        row.appendChild(b); row.appendChild(n);
-        row.next = n;
-        return row;
-      }
-
-      /* step 0 — the service tiles, personal only */
-      var s0 = el('div','wz-step');
-      var grid = el('div','home-grid');
-      LAB_TILES.forEach(function(t){
-        var b = el('button','home-tile' + (t.live ? '' : ' locked'));
-        b.type = 'button';
-        b.innerHTML = labSvcIcon(t.key, t.d) + '<span>' + t.label + '</span>';
-        b.addEventListener('click', function(){
-          if (!t.live){ kit.toast('This version prototypes the personal loan journey only.'); return; }
-          go(1);
-        });
-        grid.appendChild(b);
+      installWidget({
+        card:card, screen:screen, tiles:LAB_TILES, reason:true,
+        icon:function(t){ return labSvcIcon(t.key, t.d); },
+        toast:kit.toast,
+        onStart:function(w){ W = w; startApp(); }
       });
-      s0.appendChild(grid);
-      steps.push(s0);
-
-      /* step 1 — how much */
-      var s1 = el('div','wz-step');
-      var v1 = el('div','wz-val', money(W.amount));
-      s1.appendChild(v1);
-      s1.appendChild(el('p','wz-cap','A rough figure is fine — it can move before anything is submitted.'));
-      var r1 = document.createElement('input');
-      r1.type = 'range'; r1.className = 'rng';
-      r1.min = '0'; r1.max = '250000'; r1.step = '1000'; r1.value = String(W.amount);
-      s1.appendChild(r1);
-      s1.appendChild(el('div','wz-ends','<span>$0</span><span>$250,000</span>'));
-      var n1 = nav(function(){ go(0); }, 'Continue');
-      s1.appendChild(n1);
-      r1.addEventListener('input', function(){
-        W.amount = Number(r1.value);
-        v1.textContent = money(W.amount);
-        paintRange(r1);
-        n1.next.disabled = W.amount < 1000;
-      });
-      n1.next.addEventListener('click', function(){ go(2); });
-      paintRange(r1);
-      steps.push(s1);
-
-      /* step 2 — how long */
-      var s2 = el('div','wz-step');
-      var v2 = el('div','wz-val', termLabel());
-      s2.appendChild(v2);
-      s2.appendChild(el('p','wz-cap','Longer terms lower the repayment and raise the total interest.'));
-      var r2 = document.createElement('input');
-      r2.type = 'range'; r2.className = 'rng';
-      r2.min = '0'; r2.max = '7'; r2.step = '1'; r2.value = String(W.term);
-      s2.appendChild(r2);
-      s2.appendChild(el('div','wz-ends','<span>No preference</span><span>7 years</span>'));
-      var n2 = nav(function(){ go(1); }, 'Continue');
-      s2.appendChild(n2);
-      r2.addEventListener('input', function(){
-        W.term = Number(r2.value);
-        v2.textContent = termLabel();
-        paintRange(r2);
-      });
-      n2.next.addEventListener('click', function(){ go(3); });
-      paintRange(r2);
-      steps.push(s2);
-
-      /* step 3 — what for. The list itself lives in a sheet, so the widget
-         stays the same height until it is opened. */
-      var s3 = el('div','wz-step');
-      var trigger = el('button','wz-drop','<b>Select a reason</b><span class="cv">' + LAB_SVG.cv + '</span>');
-      trigger.type = 'button';
-      s3.appendChild(trigger);
-
-      /* “Other” needs a line of its own, so the broker knows what it is */
-      var other = el('div','wz-other');
-      other.hidden = true;
-      var otherIn = document.createElement('input');
-      otherIn.type = 'text';
-      otherIn.className = 'v4in';
-      otherIn.placeholder = 'Specify';
-      other.appendChild(otherIn);
-      s3.appendChild(other);
-
-      var n3 = nav(function(){ go(2); }, 'Start my application');
-      n3.next.disabled = true;
-      s3.appendChild(n3);
-
-      otherIn.addEventListener('input', function(){
-        W.reasonDetail = otherIn.value.trim();
-        n3.next.disabled = !W.reasonDetail;
-      });
-      trigger.addEventListener('click', function(){
-        trigger.classList.add('open');
-        openReasons(trigger, n3.next, function(name){
-          var isOther = name === 'Other';
-          other.hidden = !isOther;
-          if (!isOther){ otherIn.value = ''; W.reasonDetail = ''; }
-          n3.next.disabled = isOther && !otherIn.value.trim();
-          size();
-          if (isOther) setTimeout(function(){ otherIn.focus(); }, 360);
-        });
-      });
-      n3.next.addEventListener('click', startApp);
-      steps.push(s3);
-
-      steps.forEach(function(s){ rail.appendChild(s); });
-
-      var at = 0;
-      function size(){
-        var h = steps[at].offsetHeight;
-        if (h) vp.style.height = h + 'px';
-        requestAnimationFrame(function(){
-          var h2 = steps[at].offsetHeight;
-          if (h2) vp.style.height = h2 + 'px';
-        });
-      }
-      function go(i){
-        at = i;
-        rail.style.transform = 'translateX(' + (-100 * i) + '%)';
-        steps.forEach(function(s, n){
-          if (n === i) s.removeAttribute('inert'); else s.setAttribute('inert','');
-        });
-        h2.textContent = TITLES[i];
-        tag.style.display = i === 0 ? '' : 'none';
-        Array.prototype.forEach.call(dots.children, function(d, n){ d.classList.toggle('on', n <= i); });
-        size();
-      }
-      go(0);
-      setTimeout(size, 60);
-    }
-
-    /* The loan-use options only exist inside this sheet — nothing shows on
-       the widget until the customer opens it. */
-    function openReasons(trigger, nextBtn, onPick){
-      var scrim = el('div','pickr-scrim');
-      var sheet = el('div','pickr');
-      sheet.appendChild(el('div','pickr-grab'));
-      sheet.appendChild(el('h4','pickr-t','What’s the loan for?'));
-      var list = el('div','pickr-list');
-      REASONS.forEach(function(name){
-        var o = el('button','wz-opt' + (W.reason === name ? ' on' : ''), name);
-        o.type = 'button';
-        o.addEventListener('click', function(){
-          W.reason = name;
-          trigger.querySelector('b').textContent = name;
-          trigger.classList.add('set');
-          nextBtn.disabled = false;
-          close();
-          if (onPick) onPick(name);
-        });
-        list.appendChild(o);
-      });
-      sheet.appendChild(list);
-      scrim.appendChild(sheet);
-      screen.appendChild(scrim);
-      requestAnimationFrame(function(){ scrim.classList.add('show'); });
-      setTimeout(function(){ scrim.classList.add('show'); }, 20);
-
-      function close(){
-        trigger.classList.remove('open');
-        scrim.classList.remove('show');
-        setTimeout(function(){ scrim.remove(); }, 320);
-      }
-      scrim.addEventListener('click', function(e){ if (e.target === scrim) close(); });
     }
 
     /* ---------- the application, built to the Figma screens ---------- */
@@ -5646,146 +5829,16 @@ var LAB_TILES = [
     }
 
     /* ---------- screen 2 · verify it's you ---------- */
-    function modal(build){
-      var scrim = el('div','v4scrim');
-      var box = el('div','v4modal');
-      scrim.appendChild(box);
-      screen.appendChild(scrim);
-      build(box, function close(){
-        keyboard(false);
-        scrim.classList.remove('show');
-        setTimeout(function(){ scrim.remove(); }, 300);
-      });
-      requestAnimationFrame(function(){ scrim.classList.add('show'); });
-      setTimeout(function(){ scrim.classList.add('show'); }, 30);
-      return scrim;
-    }
-
     function identity(){
       pct(6);
-      modal(function(box, close){
-        var ic = el('span','mic');
-        ic.innerHTML = LAB_SVG.padlock;
-        box.appendChild(ic);
-        box.appendChild(el('h3', null, 'Just one thing before we unlock your lenders…'));
-        box.appendChild(el('p', null, 'We just need to verify that it’s you.'));
-
-        var ins = [];
-        [['Name','name','Dave Wallace'], ['Mobile','mobile','0412 884 019'], ['Email','email','dave.wallace@mail.com']]
-          .forEach(function(f){
-            var i = document.createElement('input');
-            i.className = 'v4in';
-            i.type = 'text';
-            i.placeholder = f[0];
-            i.value = kit.values[f[1]] || '';
-            i.addEventListener('input', sync);
-            i.dataset.key = f[1];
-            i.dataset.demo = f[2];
-            box.appendChild(i);
-            ins.push(i);
-          });
-
-        var chk = el('button','v4chk','<span class="bx">' + LAB_SVG.tickTiny + '</span>' +
-          '<span>I agree to the terms &amp; conditions</span>');
-        chk.type = 'button';
-        var agreed = false;
-        chk.addEventListener('click', function(){
-          agreed = !agreed;
-          chk.classList.toggle('on', agreed);
-          sync();
-        });
-        box.appendChild(chk);
-
-        var send = el('button','v4cta','Send me the code');
-        send.type = 'button';
-        send.disabled = true;
-        box.appendChild(send);
-
-        var fill = el('button','v4link','Fill it in for me');
-        fill.type = 'button';
-        fill.addEventListener('click', function(){
-          ins.forEach(function(i){ i.value = i.dataset.demo; });
-          agreed = true;
-          chk.classList.add('on');
-          sync();
-        });
-        box.appendChild(fill);
-
-        function sync(){
-          var full = ins.every(function(i){ return i.value.trim(); });
-          send.disabled = !(full && agreed);
-        }
-        send.addEventListener('click', function(){
-          ins.forEach(function(i){ kit.values[i.dataset.key] = i.value.trim(); });
-          close();
-          setTimeout(otp, 260);
-        });
-      });
-    }
-
-    function otp(){
-      pct(10);
-      modal(function(box, close){
-        var ic = el('span','mic');
-        ic.innerHTML = LAB_SVG.phone;
-        box.appendChild(ic);
-        box.appendChild(el('h3', null, 'We’ve sent the secret code to your phone'));
-        box.appendChild(el('p', null, 'Enter the super secret code below'));
-
-        var wrap = el('div','v4code');
-        var boxes = [];
-        for (var n = 0; n < 4; n++){
-          var i = document.createElement('input');
-          i.type = 'text';
-          i.maxLength = 1;
-          i.inputMode = 'numeric';
-          wrap.appendChild(i);
-          boxes.push(i);
-        }
-        box.appendChild(wrap);
-        boxes.forEach(function(i, n){
-          i.addEventListener('input', function(){
-            if (i.value && boxes[n + 1]) boxes[n + 1].focus();
-            check();
-          });
-        });
-        var count = el('p','v4count','30 seconds remaining');
-        box.appendChild(count);
-        var left = 30;
-        var t = setInterval(function(){
-          left--;
-          count.textContent = left + ' seconds remaining';
-          if (left <= 0) clearInterval(t);
-        }, 1000);
-
-        var resend = el('button','v4link','Resend the code');
-        resend.type = 'button';
-        resend.addEventListener('click', function(){
-          boxes.forEach(function(b){ b.value = ''; });
-          left = 30;
-          kit.toast('A new code would be sent here.');
-        });
-        box.appendChild(resend);
-
-        var auto = el('button','v4link','Use the demo code 4 2 9 1');
-        auto.type = 'button';
-        auto.addEventListener('click', function(){
-          '4291'.split('').forEach(function(d, n){ boxes[n].value = d; });
-          check();
-        });
-        box.appendChild(auto);
-
-        function check(){
-          if (boxes.every(function(b){ return b.value; })){
-            clearInterval(t);
-            wrap.style.opacity = '.5';
-            setTimeout(function(){
-              verified = true;
-              lendersNew = true;      // the shortlist just unlocked — let the chip say so
-              close();
-              setTimeout(onHand, 240);
-            }, 500);
-          }
+      smsVerify({
+        screen:screen, values:kit.values, toast:kit.toast,
+        onClose:function(){ keyboard(false); },
+        onStep:function(step){ pct(step === 'code' ? 10 : 6); },
+        onDone:function(){
+          verified = true;
+          lendersNew = true;      // the shortlist just unlocked — let the chip say so
+          onHand();
         }
       });
     }
@@ -6758,74 +6811,25 @@ var LAB_TILES = [
       render();
     }
 
-    /* ---------- SMS verification ---------- */
-    var smsTimers = [];
-    function clearSms(){ smsTimers.forEach(clearTimeout); smsTimers = []; }
-
+    /* ---------- SMS verification ----------
+       Same point in the journey as before — straight after the preference
+       question — but wearing version 4's two modals. */
     function openSms(){
-      clearSms();
-      $('sms').classList.add('show');
-      smsNumber();
-    }
-    function closeSms(){ clearSms(); $('sms').classList.remove('show'); }
-
-    function smsNumber(){
-      var c = $('smsCard');
-      c.className = 'v5-card';
-      c.innerHTML = '';
-      c.appendChild(el('div','ic', line(P.phone, '#5614BB', 1.7, 24)));
-      c.appendChild(el('h3', null, 'Quick security check'));
-      c.appendChild(el('p', null, 'We’ll text you a six-digit code. It keeps someone else from starting an application in your name.'));
-      var box = el('div','v5-box full');
-      var input = el('input');
-      input.type = 'text'; input.value = '0412 884 019'; input.setAttribute('aria-label','Mobile number');
-      box.appendChild(input);
-      c.appendChild(box);
-      var go = el('button','go','Send my code'); go.type = 'button';
-      go.addEventListener('click', function(){ smsCode(input.value.trim() || '0412 884 019'); });
-      c.appendChild(go);
-      c.appendChild(el('p','fine','Your number isn’t shared with a lender at this stage.'));
-    }
-
-    function smsCode(number){
-      var c = $('smsCard');
-      c.innerHTML = '';
-      c.appendChild(el('div','ic', line(P.chat, '#5614BB', 1.7, 24)));
-      c.appendChild(el('h3', null, 'Enter the code'));
-      c.appendChild(el('p', null, 'Sent to <b>' + number + '</b>'));
-      var otp = el('div','v5-otp');
-      var cells = [];
-      '842119'.split('').forEach(function(){ var i = el('i'); otp.appendChild(i); cells.push(i); });
-      c.appendChild(otp);
-      c.appendChild(el('p','link','Resend code'));
-      c.appendChild(el('p','fine','Autofilling from your messages…'));
-
-      '842119'.split('').forEach(function(d, n){
-        smsTimers.push(setTimeout(function(){
-          cells[n].textContent = d;
-          cells[n].classList.add('on');
-          if (n === 5) smsTimers.push(setTimeout(function(){ smsDone(number); }, 480));
-        }, 620 + n * 190));
+      smsVerify({
+        screen:screenEl, values:vals, toast:toast,
+        onDone:function(v){
+          verified = true;
+          vals.mobile = v.mobile;
+          vals.email = v.email;
+          unlockLenders();
+          at = 2;
+          render();
+          toast('Mobile verified — your number is already filled in.');
+        }
       });
     }
-
-    function smsDone(number){
-      var c = $('smsCard');
-      c.className = 'v5-card v5-done';
-      c.innerHTML = '';
-      c.appendChild(el('div','tick','<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="' +
-        P.check + '" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'));
-      c.appendChild(el('h3', null, 'Mobile verified'));
-      c.appendChild(el('p', null, 'You can leave this application at any point — we’ll text you a link straight back to where you stopped.'));
-      verified = true;
-      vals.mobile = number;
-      unlockLenders();
-      smsTimers.push(setTimeout(function(){
-        closeSms();
-        at = 2;
-        render();
-        toast('Mobile verified — your number is already filled in.');
-      }, 1250));
+    function closeSms(){
+      Array.prototype.forEach.call(screenEl.querySelectorAll('.v4scrim'), function(n){ n.remove(); });
     }
 
     /* ---------- lender bar + options sheet ----------
@@ -7252,20 +7256,28 @@ var LAB_TILES = [
     $('backBtn').addEventListener('click', goHome);
 
     /* ---------- homescreen ---------- */
+    /* the widget runs version 4's wizard, minus its closing reason step —
+       this journey asks what the loan is for on its own first screen */
+    var widget = null;
     function paintHome(){
-      var grid = $('homeGrid');
-      grid.innerHTML = '';
-      SERVICES.forEach(function(s){
-        var live = s.key === 'personal';        // this journey only prototypes personal loans
-        var b = el('button', 'home-tile' + (live ? '' : ' soon'));
-        b.type = 'button';
-        b.innerHTML = svcIcon(s.key, s.d, version) + '<span>' + s.label + '</span>';
-        b.addEventListener('click', function(){
-          if (!live){ toast('Only the personal loan journey is prototyped here.'); return; }
+      widget = installWidget({
+        card:$('home').querySelector('.home-card'), screen:screenEl,
+        tiles:SERVICES.map(function(x){
+          return { key:x.key, label:x.label, d:x.d, live:x.key === 'personal' };
+        }),
+        icon:function(t){ return svcIcon(t.key, t.d, version); },
+        toast:toast, reason:false,
+        resume:function(){
+          if (!started) return false;
+          $('home').classList.add('gone');   // straight back to where they stopped
+          return true;
+        },
+        onStart:function(w){
+          vals.amount = w.amount;
+          vals.term = w.term;
           $('home').classList.add('gone');
           if (!started){ started = true; render(); }
-        });
-        grid.appendChild(b);
+        }
       });
     }
     function goHome(){
@@ -7303,6 +7315,7 @@ var LAB_TILES = [
       setLenderCount(LENDERS.start);
       render();
       $('home').classList.remove('gone');
+      if (widget) widget.reset();
     }
     $('restart').addEventListener('click', boot);
 
@@ -7341,6 +7354,7 @@ var LAB_TILES = [
     var needs = {};                        // fields flagged after a pre-fill
     var prompts = [], seen = {}, chatSec = -1;
     var here = null;                       // the screen to come back to from the homescreen
+    var widget = null;                     // what the homescreen widget collected
 
     /* ---------- the prompts, rebuilt for whichever section you're on ---------- */
     function promptsFor(g){
@@ -7377,7 +7391,7 @@ var LAB_TILES = [
       unread = 0;
       pref = PREFS[0]; prefTouched = false;
       at = 0; refs = []; dropped = {}; backTo = null; needs = {};
-      prompts = []; seen = {}; chatSec = -1; here = null;
+      prompts = []; seen = {}; chatSec = -1; here = null; widget = null;
       clearTimeout(bubbleT);
       kit.values = {};
       kit.product = 'Personal';
@@ -7435,18 +7449,6 @@ var LAB_TILES = [
       card.appendChild(top);
 
       var grid = el('div','home-grid');
-      LAB_TILES.forEach(function(t){
-        var live = t.key === 'personal';
-        var b = el('button','home-tile' + (live ? '' : ' soon'));
-        b.type = 'button';
-        b.innerHTML = labSvcIcon(t.key, t.d) + '<span>' + t.label + '</span>';
-        b.addEventListener('click', function(){
-          if (!live){ kit.toast('This version prototypes the personal loan journey only.'); return; }
-          shell();
-          (here || loanUse)();          // pick the journey up where it was left
-        });
-        grid.appendChild(b);
-      });
       card.appendChild(grid);
 
       var cfoot = el('div','home-foot');
@@ -7458,6 +7460,35 @@ var LAB_TILES = [
       h.appendChild(hero);
       screen.appendChild(h);
       screen.appendChild(kit.toastEl);
+
+      /* The wizard runs once. After that the homescreen is only a way back
+         in, so the tiles resume the journey instead of asking again. */
+      if (here){
+        LAB_TILES.forEach(function(t){
+          var live = t.key === 'personal';
+          var b = el('button','home-tile' + (live ? '' : ' soon'));
+          b.type = 'button';
+          b.innerHTML = labSvcIcon(t.key, t.d) + '<span>' + t.label + '</span>';
+          b.addEventListener('click', function(){
+            if (!live){ kit.toast('Only the personal loan journey is prototyped here.'); return; }
+            shell();
+            here();
+          });
+          grid.appendChild(b);
+        });
+        return;
+      }
+
+      installWidget({
+        card:card, screen:screen, tiles:LAB_TILES, reason:false,
+        icon:function(t){ return labSvcIcon(t.key, t.d); },
+        toast:kit.toast,
+        onStart:function(w){
+          widget = w;
+          shell();
+          loanUse();
+        }
+      });
     }
 
     /* ---------- application chrome ---------- */
@@ -8088,146 +8119,16 @@ var LAB_TILES = [
     }
 
     /* ---------- screen 3 · the SMS check ---------- */
-    function modal(build){
-      var scrim = el('div','v4scrim');
-      var box = el('div','v4modal');
-      scrim.appendChild(box);
-      screen.appendChild(scrim);
-      build(box, function close(){
-        scrim.classList.remove('show');
-        setTimeout(function(){ scrim.remove(); }, 300);
-      });
-      requestAnimationFrame(function(){ scrim.classList.add('show'); });
-      setTimeout(function(){ scrim.classList.add('show'); }, 30);
-      return scrim;
-    }
-
     function identity(){
       pct(12);
-      modal(function(box, close){
-        var ic = el('span','mic');
-        ic.innerHTML = LAB_SVG.padlock;
-        box.appendChild(ic);
-        box.appendChild(el('h3', null, 'Just one thing before we unlock your lenders…'));
-        box.appendChild(el('p', null, 'We just need to verify that it’s you.'));
-
-        var ins = [];
-        [['Name','name','Dave Wallace'], ['Mobile','mobile','0412 884 019'], ['Email','email','dave.wallace@mail.com']]
-          .forEach(function(f){
-            var i = document.createElement('input');
-            i.className = 'v4in';
-            i.type = 'text';
-            i.placeholder = f[0];
-            i.value = kit.values[f[1]] || '';
-            i.dataset.key = f[1];
-            i.dataset.demo = f[2];
-            i.addEventListener('input', sync2);
-            box.appendChild(i);
-            ins.push(i);
-          });
-
-        var chk = el('button','v4chk','<span class="bx">' + LAB_SVG.tickTiny + '</span>' +
-          '<span>I agree to the terms &amp; conditions</span>');
-        chk.type = 'button';
-        var agreed = false;
-        chk.addEventListener('click', function(){
-          agreed = !agreed;
-          chk.classList.toggle('on', agreed);
-          sync2();
-        });
-        box.appendChild(chk);
-
-        var send = el('button','v4cta','Send me the code');
-        send.type = 'button';
-        send.disabled = true;
-        box.appendChild(send);
-
-        var fill = el('button','v4link','Fill it in for me');
-        fill.type = 'button';
-        fill.addEventListener('click', function(){
-          ins.forEach(function(i){ i.value = i.dataset.demo; });
-          agreed = true;
-          chk.classList.add('on');
-          sync2();
-        });
-        box.appendChild(fill);
-
-        function sync2(){
-          var full = ins.every(function(i){ return i.value.trim(); });
-          send.disabled = !(full && agreed);
-        }
-        send.addEventListener('click', function(){
-          ins.forEach(function(i){ kit.values[i.dataset.key] = i.value.trim(); });
-          close();
-          setTimeout(otp, 260);
-        });
-      });
-    }
-
-    function otp(){
-      pct(14);
-      modal(function(box, close){
-        var ic = el('span','mic');
-        ic.innerHTML = LAB_SVG.phone;
-        box.appendChild(ic);
-        box.appendChild(el('h3', null, 'We’ve sent the secret code to your phone'));
-        box.appendChild(el('p', null, 'Enter the super secret code below'));
-
-        var wrap = el('div','v4code');
-        var boxes = [];
-        for (var n = 0; n < 4; n++){
-          var i = document.createElement('input');
-          i.type = 'text';
-          i.maxLength = 1;
-          i.inputMode = 'numeric';
-          wrap.appendChild(i);
-          boxes.push(i);
-        }
-        box.appendChild(wrap);
-        boxes.forEach(function(i, n){
-          i.addEventListener('input', function(){
-            if (i.value && boxes[n + 1]) boxes[n + 1].focus();
-            check();
-          });
-        });
-
-        var count = el('p','v4count','30 seconds remaining');
-        box.appendChild(count);
-        var left = 30;
-        var t = setInterval(function(){
-          left--;
-          count.textContent = left + ' seconds remaining';
-          if (left <= 0) clearInterval(t);
-        }, 1000);
-
-        var resend = el('button','v4link','Resend the code');
-        resend.type = 'button';
-        resend.addEventListener('click', function(){
-          boxes.forEach(function(b){ b.value = ''; });
-          left = 30;
-          kit.toast('A new code would be sent here.');
-        });
-        box.appendChild(resend);
-
-        var auto = el('button','v4link','Use the demo code 4 2 9 1');
-        auto.type = 'button';
-        auto.addEventListener('click', function(){
-          '4291'.split('').forEach(function(d, n){ boxes[n].value = d; });
-          check();
-        });
-        box.appendChild(auto);
-
-        function check(){
-          if (!boxes.every(function(b){ return b.value; })) return;
-          clearInterval(t);
-          wrap.style.opacity = '.5';
-          setTimeout(function(){
-            verified = true;
-            close();
-            paintChip();
-            kit.toast(LENDER_COUNT + ' lenders unlocked — the chip up top now opens.');
-            setTimeout(startForm, 260);
-          }, 500);
+      smsVerify({
+        screen:screen, values:kit.values, toast:kit.toast,
+        onStep:function(step){ pct(step === 'code' ? 14 : 12); },
+        onDone:function(){
+          verified = true;
+          paintChip();
+          kit.toast(LENDER_COUNT + ' lenders unlocked — the chip up top now opens.');
+          startForm();
         }
       });
     }
