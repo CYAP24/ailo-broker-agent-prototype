@@ -7374,11 +7374,6 @@ var LAB_TILES = [
       if (g.sec === 'personal'){
         list.push({ t:'Fill this section with my licence',
           go:function(){ fillFromDoc('Licence', FAST[0], 'licence'); } });
-        list.push({ t:'What if my ID doesn’t match?', go:function(){
-          ai('Use the name exactly as printed on your licence — a nickname or a missing middle name ' +
-             'is the usual reason an identity check bounces. If the licence has expired, say so and ' +
-             'I’ll switch you to a passport instead.');
-        }});
       }
       if (g.sec === 'income'){
         list.push({ t:'Fill this section from my payslip',
