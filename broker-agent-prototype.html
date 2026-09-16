@@ -2125,7 +2125,8 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 .dock .cnt.off{display:none}
 .dock .cv{flex:none;display:flex;color:var(--brand);transition:transform .22s;transform:rotate(180deg)}
 .dock.open .cv{transform:none}
-.dock.pulse{animation:dockPulse 1.6s ease-in-out 2}
+/* it keeps flashing until the drawer is opened, not for a set number of beats */
+.dock.pulse{animation:dockPulse 1.6s ease-in-out infinite}
 @keyframes dockPulse{0%,100%{background:#FBF8FF}50%{background:#EFE4FF}}
 
 /* the prompt bubbles: one rail above the dock that runs off the screen edge.
@@ -7362,16 +7363,37 @@ var LAB_TILES = [
     var foot, backBtn, nextBtn, lsheet, lsList, lsLabel, lsMenu, sheet, chatBox, promptBox;
     var verified = false, lendersOpen = false, chatOpen = false, unread = 0;
     var pref = PREFS[0], prefTouched = false;
-    var at = 0, refs = [], bubblesOff = false, dropped = {}, bubbleT = null, backTo = null;
+    var at = 0, refs = [], dropped = {}, bubbleT = null, backTo = null;
     var needs = {};                        // fields flagged after a pre-fill
+    var prompts = [], seen = {}, chatSec = -1;
+    var here = null;                       // the screen to come back to from the homescreen
 
-    /* ---------- the four standing prompts ---------- */
-    var PROMPTS = [
-      { t:'Fill this section with my licence', go:function(){ fillFromLicence(); } },
-      { t:'Help me fast track application',    go:function(){ startFastTrack(); } },
-      { t:'View current lender options',       go:function(){ lendersFromChat('options'); } },
-      { t:'View current loan rates',           go:function(){ lendersFromChat('rates'); } }
-    ];
+    /* ---------- the prompts, rebuilt for whichever section you're on ---------- */
+    function promptsFor(g){
+      var list = [];
+      if (g.sec === 'personal'){
+        list.push({ t:'Fill this section with my licence',
+          go:function(){ fillFromDoc('Licence', FAST[0], 'licence'); } });
+        list.push({ t:'What if my ID doesn’t match?', go:function(){
+          ai('Use the name exactly as printed on your licence — a nickname or a missing middle name ' +
+             'is the usual reason an identity check bounces. If the licence has expired, say so and ' +
+             'I’ll switch you to a passport instead.');
+        }});
+      }
+      if (g.sec === 'income'){
+        list.push({ t:'Fill this section from my payslip',
+          go:function(){ fillFromDoc('Payslip', FAST[1], 'payslip'); } });
+        list.push({ t:'Does my job history affect approval?', go:function(){
+          ai('Time in the job counts for more than the salary with most lenders — six months is the ' +
+             'usual threshold. Casual and contract work is fine, it just changes which lenders look ' +
+             'at you first.');
+        }});
+      }
+      list.push({ t:'Help me fast track application', go:function(){ startFastTrack(); } });
+      list.push({ t:'View current lender options',    go:function(){ lendersFromChat('options'); } });
+      list.push({ t:'View current loan rates',        go:function(){ lendersFromChat('rates'); } });
+      return list;
+    }
 
     /* ---------- the three things a fast-track needs ---------- */
     var FAST = [
@@ -7388,9 +7410,10 @@ var LAB_TILES = [
 
     function boot(){
       verified = false; lendersOpen = false; chatOpen = false;
-      unread = PROMPTS.length;               // the badge counts the prompts waiting inside
+      unread = 0;
       pref = PREFS[0]; prefTouched = false;
-      at = 0; refs = []; bubblesOff = false; dropped = {}; backTo = null; needs = {};
+      at = 0; refs = []; dropped = {}; backTo = null; needs = {};
+      prompts = []; seen = {}; chatSec = -1; here = null;
       clearTimeout(bubbleT);
       kit.values = {};
       kit.product = 'Personal';
@@ -7456,7 +7479,7 @@ var LAB_TILES = [
         b.addEventListener('click', function(){
           if (!live){ kit.toast('This version prototypes the personal loan journey only.'); return; }
           shell();
-          loanUse();
+          (here || loanUse)();          // pick the journey up where it was left
         });
         grid.appendChild(b);
       });
@@ -7481,9 +7504,11 @@ var LAB_TILES = [
       var row = el('div','row');
       var back = el('button','back');
       back.type = 'button';
-      back.setAttribute('aria-label','Back');
+      back.setAttribute('aria-label','Home');
       back.innerHTML = LAB_SVG.back;
-      back.addEventListener('click', goBack);
+      /* the arrow parks the application on the homescreen — the footer Back
+         button is the one that steps back through the journey */
+      back.addEventListener('click', goHome);
       row.appendChild(back);
       var lg = el('span','lgo');
       lg.innerHTML = LAB_SVG.mark;
@@ -7577,6 +7602,14 @@ var LAB_TILES = [
     }
 
     function goBack(){ if (backTo) backTo(); }
+
+    function goHome(){
+      openChat(false);
+      openLenders(false);
+      clearTimeout(bubbleT);
+      home();
+      kit.toast('Your progress is saved.');
+    }
 
     /* ---------- the lender chip: locked, then a working dropdown ---------- */
     function paintChip(){
@@ -7766,7 +7799,7 @@ var LAB_TILES = [
 
     function paintPrompts(){
       promptBox.innerHTML = '';
-      PROMPTS.forEach(function(p){
+      prompts.forEach(function(p){
         var b = el('button','dkp','<span class="si">' + LAB_SVG.spark + '</span><span>' + p.t + '</span>');
         b.type = 'button';
         b.addEventListener('click', function(){
@@ -7783,14 +7816,18 @@ var LAB_TILES = [
       dock.classList.toggle('open', on);
       if (!on) return;
       openLenders(false);
-      /* once the drawer has been opened the prompts live inside it, not above it */
-      bubblesOff = true;
+      /* for this section the prompts now live inside the drawer, not above it */
+      seen[at] = true;
       clearTimeout(bubbleT);
       hideBubbles();
+      dock.classList.remove('pulse');
       unread = 0;
       paintCnt();
-      if (!chatBox.childNodes.length){
-        ai('I can see everything on this screen. Here’s what I can do from here.');
+      if (chatSec !== at){
+        chatSec = at;
+        ai(chatBox.childNodes.length
+          ? 'You’re on “' + kit.groups[at].title + '” now. Here’s what I can do on this screen.'
+          : 'I can see everything on this screen. Here’s what I can do from here.');
       }
       scrollChat();
     }
@@ -7801,28 +7838,28 @@ var LAB_TILES = [
     }
 
     /* ---------- what the prompts do ---------- */
-    /* Nothing is filled on the strength of the ask alone — the licence has to
+    /* Nothing is filled on the strength of the ask alone — the document has to
        turn up first, so the prompt puts an upload in front of you. */
-    function fillFromLicence(){
-      var own = refs.filter(function(r){ return r.q.src === 'Licence'; });
+    function fillFromDoc(src, doc, noun){
+      var own = refs.filter(function(r){ return r.q.src === src; });
       if (!own.length){
-        ai('Nothing on this screen comes off your licence — I’ll offer it again on the ID questions.');
+        ai('Nothing on this screen comes off your ' + noun + ' — I’ll offer it again where it helps.');
         return;
       }
       if (!own.filter(function(r){ return !r.get(); }).length){
-        ai('Everything your licence covers on this screen is already filled in.');
+        ai('Everything your ' + noun + ' covers on this screen is already filled in.');
         return;
       }
-      ai('Happy to. Upload a photo of your licence and I’ll read the fields straight off it.');
-      chatBox.appendChild(uploadRow(FAST[0], function(){
+      ai('Happy to. Upload your ' + noun + ' and I’ll read the fields straight off it.');
+      chatBox.appendChild(uploadRow(doc, function(){
         ai('Reading it now…');
         setTimeout(function(){
-          var n = fillGroup('Licence');
+          var n = fillGroup(src);
           ai('Got it — ' + n + ' field' + (n === 1 ? '' : 's') +
-             ' filled from your licence. Type over anything I got wrong.');
+             ' filled from your ' + noun + '. Type over anything I got wrong.');
           setTimeout(function(){
             openChat(false);
-            kit.toast('Filled from your licence — check the highlighted fields.');
+            kit.toast('Filled from your ' + noun + ' — check the highlighted fields.');
           }, 900);
         }, 950);
       }));
@@ -7937,9 +7974,9 @@ var LAB_TILES = [
 
     /* ---------- the prompt bubbles above the dock ---------- */
     function showBubbles(){
-      if (chatOpen || lendersOpen || bubblesOff) return;
+      if (chatOpen || lendersOpen || seen[at]) return;
       rail.innerHTML = '';
-      PROMPTS.forEach(function(p){
+      prompts.forEach(function(p){
         if (dropped[p.t]) return;
         var b = el('button','dkbub', p.t);
         b.type = 'button';
@@ -7949,8 +7986,7 @@ var LAB_TILES = [
       if (!rail.firstChild) return;
       rail.scrollLeft = 0;
       rail.classList.add('show');
-      dock.classList.add('pulse');
-      setTimeout(function(){ dock.classList.remove('pulse'); }, 3400);
+      dock.classList.add('pulse');   // and it keeps flashing until the dock is tapped
     }
     function hideBubbles(){ if (rail) rail.classList.remove('show'); }
 
@@ -8033,6 +8069,7 @@ var LAB_TILES = [
 
     /* ---------- screen 1 · what the loan is for ---------- */
     function loanUse(){
+      here = loanUse;
       backTo = home;
       body.innerHTML = '';
       body.scrollTop = 0;
@@ -8059,6 +8096,7 @@ var LAB_TILES = [
 
     /* ---------- screen 2 · what matters most ---------- */
     function loanPref(){
+      here = loanPref;
       backTo = loanUse;
       body.innerHTML = '';
       body.scrollTop = 0;
@@ -8238,6 +8276,7 @@ var LAB_TILES = [
 
     function paintForm(){
       var g = kit.groups[at];
+      here = paintForm;
       backTo = at === 0 ? loanPref : function(){ at--; paintForm(); };
       body.innerHTML = '';
       body.scrollTop = 0;
@@ -8245,6 +8284,7 @@ var LAB_TILES = [
       clearTimeout(bubbleT);
       hideBubbles();
       showDock(true);
+      armPrompts(g);
 
       var wrap = el('div','lab-grp');
       wrap.appendChild(el('h3', null, g.title));
@@ -8266,8 +8306,19 @@ var LAB_TILES = [
       }, true);
       sync();
 
-      /* the bubbles ride along until the drawer is opened or they're swiped away */
-      if (!bubblesOff) bubbleT = setTimeout(showBubbles, 900);
+      /* a new section brings its own prompts, and flashes until they're read */
+      if (!seen[at]) bubbleT = setTimeout(showBubbles, 900);
+    }
+
+    /* Each section brings its own prompts, its own unread count and a clean
+       slate of bubbles — swiping one away on the last screen doesn't carry. */
+    function armPrompts(g){
+      prompts = promptsFor(g);
+      paintPrompts();
+      if (seen[at]) return;
+      dropped = {};
+      unread = prompts.length;
+      paintCnt();
     }
 
     function addField(q){
@@ -8302,6 +8353,7 @@ var LAB_TILES = [
     }
 
     function done(){
+      here = done;
       body.innerHTML = '';
       body.scrollTop = 0;
       pct(100);
