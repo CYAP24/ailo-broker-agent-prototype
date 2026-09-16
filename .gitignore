@@ -5,3 +5,6 @@
 # OS cruft
 Thumbs.db
 .DS_Store
+
+# Working copy that still carries the unshipped V5/V6 explorations
+broker-agent-prototype.labs.html
