@@ -2636,7 +2636,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
     </aside>
 
     <aside class="notes" data-notes="draft" hidden>
-      <h2 class="n-title">V4 · Broker Assist <span class="draft">(built to the Figma)</span></h2>
+      <h2 class="n-title">Document-led draft &amp; approve</h2>
 
       <div class="meter">
         <div class="mtop"><span class="mlab">AI reliance</span><span class="mval">≈ 75% AI · 25% manual</span></div>
@@ -2646,20 +2646,7 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
 
       <section>
         <h3>Overview</h3>
-        <p>Starts on the loanoptions.ai homescreen, where the widget itself runs the opening wizard — personal loan, amount, term, reason — without ever leaving the page. The application then follows the <code>AILO 4.0</code> screens: preferences, verification, and a document-led intake called Broker Assist.</p>
-      </section>
-
-      <section>
-        <h3>The journey</h3>
-        <ul>
-          <li><b>Widget wizard</b> — product tiles (personal only), an amount slider to $250,000, a term slider to 7 years, then the reason list.</li>
-          <li><b>Loan preferences</b> — lenders stay locked behind a “Unlock lenders soon” chip.</li>
-          <li><b>Verify it’s you</b> — name, mobile, email and terms, then a four-digit code. The chip flips to <b>23 lenders</b>.</li>
-          <li><b>You’ll need these on hand</b> — licence, payslip, bank login, with the encryption note.</li>
-          <li><b>Broker Assist</b> — one document per screen, swipe or use the dots to move between them. Upload, the boxes fill themselves, tap any box to correct it, then approve. Approving advances to the next document; all three unlock Continue.</li>
-          <li><b>The lender chip</b> pulses every time the application learns something new — verification, an approved document, a corrected field — and settles once the customer opens the shortlist. More of the list resolves as each document lands.</li>
-          <li><b>Double-check</b> — everything the documents gave us, plus the two answers no document carries, then submit.</li>
-        </ul>
+        <p>This version flow follows HAILO’s flow similarly where the application is solely done by capturing documents. Details are pre-filled.</p>
       </section>
 
       <section class="pros">
@@ -2667,8 +2654,6 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
         <ul>
           <li>Shortest path to a complete application — approval is far cheaper than entry.</li>
           <li>Confidence shading and an editable box per field keep the automation legible rather than magic.</li>
-          <li>Progress is honest: 6% at preferences, 80% once the documents are in, 100% at submit.</li>
-          <li>Scales with data partnerships — payroll, banking, ID — without redesigning the screen.</li>
         </ul>
       </section>
 
@@ -2677,7 +2662,6 @@ button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:p
         <ul>
           <li>Rubber-stamping risk: people may approve without reading, which is a compliance exposure.</li>
           <li>Everything hinges on document quality — a bad scan turns a card amber and the trust with it.</li>
-          <li>Verification lands early, before the customer has seen any value.</li>
         </ul>
       </section>
 
